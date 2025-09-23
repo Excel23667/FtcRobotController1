@@ -41,4 +41,24 @@ public class VaribaleTutorial extends OpMode {
          */
 
     }
+
+    @TeleOp
+    public static class UhIdk extends OpMode {
+        @Override
+        public void init() {
+           //Hlihehiorno
+        }
+        public void loop() {
+            double Lefty = gamepad1.left_stick_y;
+            double Righty = gamepad1.right_stick_y;
+            double Difference = Lefty - Righty;
+            boolean AButton = gamepad1.a;
+            //If A Button Pressed, show difference
+            if (AButton == true){
+                telemetry.addData("Benji", Difference);
+            }
+            telemetry.addData("Jaxon",Lefty);
+            telemetry.addData("Fehr",Righty);
+        }
+    }
 }
