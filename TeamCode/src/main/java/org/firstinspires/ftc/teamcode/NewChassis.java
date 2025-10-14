@@ -16,8 +16,9 @@ public class NewChassis extends OpMode {
     private DcMotor BackRight;
     private DcMotor BackLeft;
     private DcMotor FrontRight;
-    private DcMotor Shooter;
     private DcMotor Intake;
+    private DcMotor Shooter;
+    private DcMotor HighIntake;
     double y;
     double x;
     double rx;
@@ -30,11 +31,19 @@ public class NewChassis extends OpMode {
         BackRight = hardwareMap.get(DcMotor.class, "Back Right");
         BackLeft = hardwareMap.get(DcMotor.class, "Back Left");
         FrontRight = hardwareMap.get(DcMotor.class, "Front Right");
+        Intake = hardwareMap.get(DcMotor.class, "Intake");
+        HighIntake = hardwareMap.get(DcMotor.class, "High Intake");
+        Shooter = hardwareMap.get(DcMotor.class, "Shooter");
 
         FrontLeft.setDirection(DcMotor.Direction.FORWARD);
         BackRight.setDirection(DcMotor.Direction.FORWARD);
         BackLeft.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
+
+        FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     @Override
@@ -44,12 +53,18 @@ public class NewChassis extends OpMode {
         telemetry.addData("Right Stick Y",gamepad1.right_stick_y);
         telemetry.update();
         y = gamepad1.right_stick_y * 1*0.5;
-        x = -gamepad1.right_stick_x * 1.1 * -0.5;
-        rx = gamepad1.left_stick_x * 0.6 * 0.5;
+        x = -gamepad1.left_stick_x * 1.1 * -0.5;
+        rx = gamepad1.right_stick_x * 0.6 * -0.8;
         denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
         BackLeft.setPower((y + x + rx) / denominator);
         FrontLeft.setPower(((y - x) + rx) / denominator);
         BackRight.setPower(((y - x) - rx) / denominator);
         FrontRight.setPower(((y + x) - rx) / denominator);
+        Intake.setPower(gamepad1.right_trigger * 0.6);
+        Shooter.setPower(gamepad1.left_trigger * 0.6);
+        if (gamepad1.a){
+            HighIntake.setPower(0.6);
+        }
+
     }
 }
