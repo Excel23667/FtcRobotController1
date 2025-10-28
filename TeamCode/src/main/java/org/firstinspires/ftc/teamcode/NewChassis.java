@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 
@@ -21,7 +22,7 @@ public class NewChassis extends OpMode {
     private DcMotor Intake;
     private DcMotor Shooter;
     private DcMotor HighIntake;
-    private CRServo Piston;
+    private Servo Piston;
     double y;
     double x;
     double rx;
@@ -37,7 +38,7 @@ public class NewChassis extends OpMode {
         Intake = hardwareMap.get(DcMotor.class, "Intake");
         HighIntake = hardwareMap.get(DcMotor.class, "High Intake");
         Shooter = hardwareMap.get(DcMotor.class, "Shooter");
-        Piston = hardwareMap.get(CRServo.class, "Piston");
+        Piston = hardwareMap.get(Servo.class, "Piston");
 
         FrontLeft.setDirection(DcMotor.Direction.FORWARD);
         BackRight.setDirection(DcMotor.Direction.FORWARD);
@@ -51,8 +52,9 @@ public class NewChassis extends OpMode {
         BackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        Piston.setPower(0.01);
-        Piston.setPower(0);
+ //       Piston.setPower/(0.01);
+   //     Piston.setPower(0);
+        Piston.setPosition(1.0);
     }
 
     @Override
@@ -72,12 +74,30 @@ public class NewChassis extends OpMode {
         Intake.setPower(gamepad1.right_trigger * 0.6);
         HighIntake.setPower(gamepad1.left_trigger);
         if (gamepad1.a){
-            Shooter.setPower( 0.75);
+            Shooter.setPower( 0.65);
         }
         if (gamepad1.x){
             Shooter.setPower(0);
         }
         if (gamepad1.b){
+            Piston.setPosition(0.4);
+            try {
+                Thread.sleep(600);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+
+            }
+            Piston.setPosition(1.0);
+        }
+        if (gamepad1.right_bumper){
+            Intake.setPower(-0.6);
+            Intake.setPower(0);
+        }
+        if (gamepad1.left_bumper){
+            HighIntake.setPower(-0.6);
+            HighIntake.setPower(0);
+        }
+       /* if (gamepad1.b){
             Piston.setPower(-1);
             try {
                 Thread.sleep(500);
@@ -87,12 +107,12 @@ public class NewChassis extends OpMode {
             }
             Piston.setPower(1);
             try {
-                Thread.sleep(500);
+                Thread.sleep(475);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
 
             }
             Piston.setPower(0);
-        }
+        }*/
     }
 }
