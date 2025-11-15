@@ -27,6 +27,8 @@ public class NewChassis extends OpMode {
     double x;
     double rx;
     double denominator;
+    boolean intakeFront;
+
 
     @Override
     public void init() {
@@ -46,14 +48,14 @@ public class NewChassis extends OpMode {
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
         Intake.setDirection(DcMotor.Direction.REVERSE);
         HighIntake.setDirection(DcMotor.Direction.REVERSE);
+        Shooter.setDirection(DcMotor.Direction.REVERSE);
 
         FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
- //       Piston.setPower/(0.01);
-   //     Piston.setPower(0);
+        intakeFront = true;
         Piston.setPosition(1.0);
     }
 
@@ -62,19 +64,50 @@ public class NewChassis extends OpMode {
         telemetry.addData("Left Stick X",gamepad1.left_stick_x);
         telemetry.addData("Right Stick X",gamepad1.right_stick_y);
         telemetry.addData("Right Stick Y",gamepad1.right_stick_y);
+        telemetry.addData("Intake is front?",intakeFront);
         telemetry.update();
-        y = gamepad1.right_stick_y * 1*0.75;
-        x = -gamepad1.left_stick_x * 1.1 * -0.75;
-        rx = gamepad1.right_stick_x * 0.6 * -0.9;
-        denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
-        BackLeft.setPower((y + x + rx) / denominator);
-        FrontLeft.setPower(((y - x) + rx) / denominator);
-        BackRight.setPower(((y - x) - rx) / denominator);
-        FrontRight.setPower(((y + x) - rx) / denominator);
+        if (intakeFront){
+            y = gamepad1.right_stick_y * 1*0.75;
+            x = -gamepad1.left_stick_x * 1.1 * -0.75;
+            rx = gamepad1.right_stick_x * 0.6 * -0.9;
+            denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+            BackLeft.setPower((y + x + rx) / denominator);
+            FrontLeft.setPower(((y - x) + rx) / denominator);
+            BackRight.setPower(((y - x) - rx) / denominator);
+            FrontRight.setPower(((y + x) - rx) / denominator);
+        } else if (!intakeFront) {
+            y = -gamepad1.right_stick_y * 1*0.75;
+            x = -gamepad1.left_stick_x * 1.1 * -0.75;
+            rx = -gamepad1.right_stick_x * 0.6 * -0.9;
+            denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+            BackLeft.setPower((y + x + rx) / denominator);
+            FrontLeft.setPower(((y - x) + rx) / denominator);
+            BackRight.setPower(((y - x) - rx) / denominator);
+            FrontRight.setPower(((y + x) - rx) / denominator);
+        }
+        if (gamepad1.y){
+            if (intakeFront){
+                intakeFront = false;
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+
+                }
+            } else if (!intakeFront) {
+                intakeFront = true;
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+
+                }
+            }
+        }
         Intake.setPower(gamepad1.right_trigger * 0.6);
         HighIntake.setPower(gamepad1.left_trigger);
         if (gamepad1.a){
-            Shooter.setPower( 0.65);
+            Shooter.setPower( 0.57);
         }
         if (gamepad1.x){
             Shooter.setPower(0);
@@ -88,6 +121,14 @@ public class NewChassis extends OpMode {
 
             }
             Piston.setPosition(1.0);
+            Shooter.setPower(1);
+            try {
+                Thread.sleep(600);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+
+            }
+            Shooter.setPower(0.57);
         }
         if (gamepad1.right_bumper){
             Intake.setPower(-0.6);
