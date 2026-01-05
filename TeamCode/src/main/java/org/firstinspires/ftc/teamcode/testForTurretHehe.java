@@ -17,7 +17,8 @@ import java.util.List;
 public class testForTurretHehe extends OpMode {
     private CRServo Turret;
     double BaringYuh;
-    private DigitalChannel limitSwitch;
+    private DigitalChannel leftLimit;
+    private DigitalChannel rightLimit;
 
     VisionPortal visionPortal;
     AprilTagProcessor tagProcessor;
@@ -34,8 +35,10 @@ public class testForTurretHehe extends OpMode {
                 .addProcessor(tagProcessor)
                 .build();
 
-        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch1");
-        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
+        leftLimit = hardwareMap.get(DigitalChannel.class, "leftLimit1");
+        leftLimit.setMode(DigitalChannel.Mode.INPUT);
+        rightLimit = hardwareMap.get(DigitalChannel.class, "rightLimit1");
+        rightLimit.setMode(DigitalChannel.Mode.INPUT);
 
         telemetry.addLine("Init complete");
         telemetry.update();
@@ -74,10 +77,12 @@ public class testForTurretHehe extends OpMode {
             BaringYuh=bearing;
         } else {
             telemetry.addLine("No tag detected");
-            if (limitSwitch.getState() == false){
+            if (leftLimit.getState() == false){
                 Turret.setPower(-0.15);
                 BaringYuh = -0.01;
-
+            } else if (rightLimit.getState() == false) {
+                Turret.setPower(0.15);
+                BaringYuh = 0.01;
             } else {
                 if (BaringYuh> 0){
                     Turret.setPower(0.15);

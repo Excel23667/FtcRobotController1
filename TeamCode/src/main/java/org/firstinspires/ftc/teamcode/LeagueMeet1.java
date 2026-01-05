@@ -44,6 +44,11 @@ public class LeagueMeet1 extends OpMode {
     String pos1 = "empty";
     String pos2 = "empty";
     String pos3 = "empty";
+    String Lpos1 = "empty";
+    String Lpos2 = "empty";
+    String Lpos3 = "empty";
+    int LticksCount = 500;
+    int i;
 
 
     @Override
@@ -60,7 +65,7 @@ public class LeagueMeet1 extends OpMode {
         Turret = hardwareMap.get(CRServo.class, "Turret");
         color = hardwareMap.get(ColorSensor.class, "color");
 
-        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch1");
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "leftLimit1");
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         FrontLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -90,16 +95,28 @@ public class LeagueMeet1 extends OpMode {
         telemetry.addData("Ticks",Spindex.getCurrentPosition());
         telemetry.update();
 
-        y = gamepad1.right_stick_y * 1*0.75;
-        x = -gamepad1.right_stick_x * 1.1 * -0.75;
-        rx = gamepad1.left_stick_x * 0.6 * -0.9;
-        denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
-        BackLeft.setPower((y + x + rx) / denominator);
-        FrontLeft.setPower(((y - x) + rx) / denominator);
-        BackRight.setPower(((y - x) - rx) / denominator);
-        FrontRight.setPower(((y + x) - rx) / denominator);
+        if (gamepad1.left_bumper){
+            y = gamepad1.right_stick_y * 1*0.75*0.5;
+            x = -gamepad1.right_stick_x * 1.1 * -0.75*0.5;
+            rx = gamepad1.left_stick_x * 0.6 * -0.9*0.7;
+            denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+            BackLeft.setPower((y + x + rx) / denominator);
+            FrontLeft.setPower(((y - x) + rx) / denominator);
+            BackRight.setPower(((y - x) - rx) / denominator);
+            FrontRight.setPower(((y + x) - rx) / denominator);
+        }else {
+            y = gamepad1.right_stick_y * 1 * 0.75;
+            x = -gamepad1.right_stick_x * 1.1 * -0.75;
+            rx = gamepad1.left_stick_x * 0.6 * -0.9;
+            denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+            BackLeft.setPower((y + x + rx) / denominator);
+            FrontLeft.setPower(((y - x) + rx) / denominator);
+            BackRight.setPower(((y - x) - rx) / denominator);
+            FrontRight.setPower(((y + x) - rx) / denominator);
+        }
 
-        Intake.setPower(gamepad1.right_trigger * 0.6);
+
+        Intake.setPower((gamepad1.right_trigger * 0.6)-(gamepad1.left_trigger*0.6));
 
         Color.RGBToHSV(
                 color.red() * 8,
@@ -112,43 +129,79 @@ public class LeagueMeet1 extends OpMode {
         if (hue > 200 && hue < 235) {
             telemetry.addLine(">>> PURPLE detected!");
             colorRead = "purple";
-        }
-        else if (hue > 150 && hue < 165) {
+        } else if (hue > 150 && hue < 165) {
             telemetry.addLine(">>> GREEN detected!");
             colorRead = "green";
-        }
-        else {
+        } else {
             telemetry.addLine("Unknown color");
             colorRead = "empty";
         }
 
-        if (gamepad1.a){
-            Shooter.setPower( 0.57);
+
+//auto-intake
+        if (!colorRead.equals("empty")) {
+            if (!pos1.equals("empty") && !pos2.equals("empty") && !pos3.equals("empty")) {
+
+            } else {
+                if (ticksCount == 0) {
+                    pos1 = colorRead;
+                    colorRead = "empty";
+                    ticksCount = 2000;
+                    Spindex.setTargetPosition(ticksCount);
+                    Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Spindex.setPower(1);
+                    while (Spindex.isBusy()) {
+                    }
+                    Spindex.setPower(0);
+                    Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                } else if (ticksCount == 1000) {
+                    pos2 = colorRead;
+                    colorRead = "empty";
+                    ticksCount = 0;
+                    Spindex.setTargetPosition(ticksCount);
+                    Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Spindex.setPower(1);
+                    while (Spindex.isBusy()) {
+                    }
+                    Spindex.setPower(0);
+                    Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                } else if (ticksCount == 2000) {
+                    pos3 = colorRead;
+                    colorRead = "empty";
+                    ticksCount = 1000;
+                    Spindex.setTargetPosition(ticksCount);
+                    Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Spindex.setPower(1);
+                    while (Spindex.isBusy()) {
+                    }
+                    Spindex.setPower(0);
+                    Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }
+            }
         }
-        if (gamepad1.x){
+        if (gamepad2.a){
+            Shooter.setPower( 0.6);
+        }
+        if (gamepad2.x){
             Shooter.setPower(0);
         }
-        if (gamepad1.b){
-            Piston.setPosition(0.4);
+        if (gamepad2.b){
+            Piston.setPosition(1.0);
             try {
-                Thread.sleep(600);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
 
             }
-            Piston.setPosition(1.0);
+            Piston.setPosition(0.1);
             Shooter.setPower(1);
             try {
-                Thread.sleep(600);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
 
             }
             Shooter.setPower(0.57);
-        }
-        if (gamepad1.right_bumper){
-            Intake.setPower(-0.6);
-            Intake.setPower(0);
         }
         /*if (gamepad1.dpad_left){
             Turret.setPower(1);
@@ -169,18 +222,6 @@ public class LeagueMeet1 extends OpMode {
             }
             Turret.setPower(0);
         }*/
-
-        if (gamepad2.a){
-            Piston.setPosition(1.0);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-
-            }
-            Piston.setPosition(0.1);
-        }
-
         /*if (gamepad2.dpad_right) {
             if (ticksCount == 0){
                 if (Objects.equals(pos1, "empty")){
@@ -346,7 +387,7 @@ public class LeagueMeet1 extends OpMode {
 
 
         }*/
-        if (gamepad2.dpad_right) {
+        if (gamepad1.dpad_right) {
             if (ticksCount == 0){
                 if (Objects.equals(pos1, "empty")){
                     colorRead = "empty";
@@ -376,6 +417,14 @@ public class LeagueMeet1 extends OpMode {
                 Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Spindex.setPower(1);
                 while (Spindex.isBusy()){
+                    y = gamepad1.right_stick_y * 1*0.75;
+                    x = -gamepad1.right_stick_x * 1.1 * -0.75;
+                    rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
                 }
                 Spindex.setPower(0);
                 Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -409,6 +458,14 @@ public class LeagueMeet1 extends OpMode {
                 Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Spindex.setPower(1);
                 while (Spindex.isBusy()){
+                    y = gamepad1.right_stick_y * 1*0.75;
+                    x = -gamepad1.right_stick_x * 1.1 * -0.75;
+                    rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
                 }
                 Spindex.setPower(0);
                 Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -441,12 +498,20 @@ public class LeagueMeet1 extends OpMode {
                 Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Spindex.setPower(1);
                 while (Spindex.isBusy()){
+                    y = gamepad1.right_stick_y * 1*0.75;
+                    x = -gamepad1.right_stick_x * 1.1 * -0.75;
+                    rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
                 }
                 Spindex.setPower(0);
                 Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 }
             }
-        if (gamepad2.dpad_left) {
+        if (gamepad1.dpad_left) {
             if (ticksCount == 2000){
                 if (Objects.equals(pos3, "empty")){
                     colorRead = "empty";
@@ -476,6 +541,14 @@ public class LeagueMeet1 extends OpMode {
                 Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Spindex.setPower(1);
                 while (Spindex.isBusy()){
+                    y = gamepad1.right_stick_y * 1*0.75;
+                    x = -gamepad1.right_stick_x * 1.1 * -0.75;
+                    rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
                 }
                 Spindex.setPower(0);
                 Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -509,6 +582,14 @@ public class LeagueMeet1 extends OpMode {
                 Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Spindex.setPower(1);
                 while (Spindex.isBusy()){
+                    y = gamepad1.right_stick_y * 1*0.75;
+                    x = -gamepad1.right_stick_x * 1.1 * -0.75;
+                    rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
                 }
                 Spindex.setPower(0);
                 Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -542,6 +623,14 @@ public class LeagueMeet1 extends OpMode {
                 Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Spindex.setPower(1);
                 while (Spindex.isBusy()){
+                    y = gamepad1.right_stick_y * 1*0.75;
+                    x = -gamepad1.right_stick_x * 1.1 * -0.75;
+                    rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
                 }
                 Spindex.setPower(0);
                 Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -550,11 +639,271 @@ public class LeagueMeet1 extends OpMode {
 
         }
 
-        if (gamepad1.dpad_right){
-
+        if (gamepad2.dpad_right){
+            if (LticksCount == 500){
+                LticksCount = 2500;
+                Spindex.setTargetPosition(LticksCount);
+                Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Spindex.setPower(1);
+                while (Spindex.isBusy()){
+                    y = gamepad1.right_stick_y * 1*0.75;
+                    x = -gamepad1.right_stick_x * 1.1 * -0.75;
+                    rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
+                }
+                Spindex.setPower(0);
+                Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            } else if (LticksCount == 1500) {
+                LticksCount = 500;
+                Spindex.setTargetPosition(LticksCount);
+                Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Spindex.setPower(1);
+                while (Spindex.isBusy()){
+                    y = gamepad1.right_stick_y * 1*0.75;
+                    x = -gamepad1.right_stick_x * 1.1 * -0.75;
+                    rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
+                }
+                Spindex.setPower(0);
+                Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            } else if (LticksCount == 2500) {
+                LticksCount = 500;
+                Spindex.setTargetPosition(LticksCount);
+                Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Spindex.setPower(1);
+                while (Spindex.isBusy()){
+                    y = gamepad1.right_stick_y * 1*0.75;
+                    x = -gamepad1.right_stick_x * 1.1 * -0.75;
+                    rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
+                }
+                Spindex.setPower(0);
+                Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
         }
-        if (gamepad1.dpad_left) {
+        if (gamepad2.dpad_left) {
+            if (LticksCount == 2500){
+                LticksCount = 500;
+                Spindex.setTargetPosition(LticksCount);
+                Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Spindex.setPower(1);
+                while (Spindex.isBusy()){
+                    y = gamepad1.right_stick_y * 1*0.75;
+                    x = -gamepad1.right_stick_x * 1.1 * -0.75;
+                    rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
+                }
+                Spindex.setPower(0);
+                Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            } else if (LticksCount == 1500) {
+                LticksCount = 2500;
+                Spindex.setTargetPosition(LticksCount);
+                Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Spindex.setPower(1);
+                while (Spindex.isBusy()){
+                    y = gamepad1.right_stick_y * 1*0.75;
+                    x = -gamepad1.right_stick_x * 1.1 * -0.75;
+                    rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
+                }
+                Spindex.setPower(0);
+                Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            } else if (LticksCount == 500) {
+                LticksCount = 1500;
+                Spindex.setTargetPosition(LticksCount);
+                Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Spindex.setPower(1);
+                while (Spindex.isBusy()){
+                    y = gamepad1.right_stick_y * 1*0.75;
+                    x = -gamepad1.right_stick_x * 1.1 * -0.75;
+                    rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
+                }
+                Spindex.setPower(0);
+                Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+        }
+        if (gamepad2.y){
+            Shooter.setPower(0.75);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
 
+            }
+            if (!Objects.equals(pos1, "empty")){
+                Shooter.setPower(0.57);
+                y = 0;
+                x = 0;
+                rx = 0;
+                denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                BackLeft.setPower((y + x + rx) / denominator);
+                FrontLeft.setPower(((y - x) + rx) / denominator);
+                BackRight.setPower(((y - x) - rx) / denominator);
+                FrontRight.setPower(((y + x) - rx) / denominator);
+                ticksCount = 1500;
+                Spindex.setTargetPosition(ticksCount);
+                Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Spindex.setPower(1);
+                while (Spindex.isBusy()){
+                }
+                Spindex.setPower(0);
+                Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Piston.setPosition(1.0);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                Piston.setPosition(0.1);
+                Shooter.setPower(1);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                Shooter.setPower(0.9);
+                y = 0;
+                x = 0;
+                rx = 0;
+                denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                BackLeft.setPower((y + x + rx) / denominator);
+                FrontLeft.setPower(((y - x) + rx) / denominator);
+                BackRight.setPower(((y - x) - rx) / denominator);
+                FrontRight.setPower(((y + x) - rx) / denominator);
+                pos1 = "empty";
+            }
+            if (!Objects.equals(pos2, "empty")){
+                Shooter.setPower(0.65);
+                y = 0;
+                x = 0;
+                rx = 0;
+                denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                BackLeft.setPower((y + x + rx) / denominator);
+                FrontLeft.setPower(((y - x) + rx) / denominator);
+                BackRight.setPower(((y - x) - rx) / denominator);
+                FrontRight.setPower(((y + x) - rx) / denominator);
+                ticksCount = 2500;
+                Spindex.setTargetPosition(ticksCount);
+                Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Spindex.setPower(1);
+                while (Spindex.isBusy()){
+                }
+                Spindex.setPower(0);
+                Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Piston.setPosition(1.0);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+
+                }
+                Piston.setPosition(0.1);
+                Shooter.setPower(1);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+
+                }
+                Shooter.setPower(0.9);
+                y = 0;
+                x = 0;
+                rx = 0;
+                denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                BackLeft.setPower((y + x + rx) / denominator);
+                FrontLeft.setPower(((y - x) + rx) / denominator);
+                BackRight.setPower(((y - x) - rx) / denominator);
+                FrontRight.setPower(((y + x) - rx) / denominator);
+                pos2 = "empty";
+            }
+            if (!Objects.equals(pos3, "empty")){
+                Shooter.setPower(0.63);
+                y = 0;
+                x = 0;
+                rx = 0;
+                denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                BackLeft.setPower((y + x + rx) / denominator);
+                FrontLeft.setPower(((y - x) + rx) / denominator);
+                BackRight.setPower(((y - x) - rx) / denominator);
+                FrontRight.setPower(((y + x) - rx) / denominator);
+                ticksCount = 500;
+                Spindex.setTargetPosition(ticksCount);
+                Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Spindex.setPower(1);
+                while (Spindex.isBusy()){
+                }
+                Spindex.setPower(0);
+                Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Piston.setPosition(1.0);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+
+                }
+                Piston.setPosition(0.1);
+                Shooter.setPower(1);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+
+                }
+                Shooter.setPower(0);
+                y = 0;
+                x = 0;
+                rx = 0;
+                denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                BackLeft.setPower((y + x + rx) / denominator);
+                FrontLeft.setPower(((y - x) + rx) / denominator);
+                BackRight.setPower(((y - x) - rx) / denominator);
+                FrontRight.setPower(((y + x) - rx) / denominator);
+                pos3 = "empty";
+            }
+            Shooter.setPower(0);
+            ticksCount = 0;
+            Spindex.setTargetPosition(ticksCount);
+            Spindex.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Spindex.setPower(1);
+            while (Spindex.isBusy()){
+            }
+            Spindex.setPower(0);
+            Spindex.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        if (gamepad1.a){
+            pos1= "empty";
+            pos2= "empty";
+            pos3= "empty";
+        }
+        if (gamepad1.b){
+            pos1= "purple";
+            pos2= "purple";
+            pos3= "purple";
         }
 
         /*if (gamepad2.b){
@@ -728,9 +1077,11 @@ public class LeagueMeet1 extends OpMode {
         Spindex.setPower(gamepad2.left_stick_x);
         telemetry.addData("Ticks", Spindex.getCurrentPosition());
         telemetry.addData("Predicted Ticks", ticksCount);
+        telemetry.addData("LPredicted Ticks", LticksCount);
         telemetry.addData("Position 1",pos1);
         telemetry.addData("Position 2",pos2);
         telemetry.addData("Position 3",pos3);
 
-    }
+
+}
 }
