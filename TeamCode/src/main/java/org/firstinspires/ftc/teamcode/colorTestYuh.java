@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -8,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import android.graphics.Color;
 
-@TeleOp
+@Disabled
 public class colorTestYuh extends OpMode {
 
     private ColorSensor colorSensor;

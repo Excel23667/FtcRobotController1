@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 
 import java.util.Objects;
 
-@TeleOp
+@Disabled
 
 public class LeagueMeet1 extends OpMode {
 

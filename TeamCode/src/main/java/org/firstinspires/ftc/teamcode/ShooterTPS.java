@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+@Disabled
 @Autonomous
 public class ShooterTPS extends LinearOpMode {
 
@@ -17,7 +19,7 @@ public class ShooterTPS extends LinearOpMode {
 
         waitForStart();
 
-        Shooter.setVelocity(1303);
+        Shooter.setVelocity(1560);
         sleep(20000);
         Shooter.setVelocity(0);
 

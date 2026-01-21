@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 
 import java.util.Objects;
-
+@Disabled
 @Autonomous(name = "RedAuto")
 public class LeagueMeet1AutoFront extends LinearOpMode {
 

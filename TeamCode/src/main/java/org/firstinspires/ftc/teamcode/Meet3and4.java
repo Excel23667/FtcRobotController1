@@ -1,26 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Servo;
-import android.graphics.Color;
-import com.qualcomm.robotcore.hardware.ColorSensor;
+
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 
-import java.util.Objects;
-
-@Disabled
-
-public class DriveYuh extends LinearOpMode {
+@TeleOp
+public class Meet3and4 extends LinearOpMode {
 
     private DcMotor FrontLeft;
     private DcMotor BackRight;
@@ -32,7 +19,7 @@ public class DriveYuh extends LinearOpMode {
     double denominator;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
         FrontLeft = hardwareMap.get(DcMotor.class, "Front Left");
         BackRight = hardwareMap.get(DcMotor.class, "Back Right");
@@ -57,13 +44,13 @@ public class DriveYuh extends LinearOpMode {
 
         while (opModeIsActive()){
             if (gamepad1.left_bumper){
-                y = gamepad1.right_stick_y * 1*0.75*0.5;
-                x = -gamepad1.right_stick_x * 1.1 * -0.75*0.5;
-                rx = gamepad1.left_stick_x * 0.6 * -0.9*0.7;
+                y = -gamepad1.right_stick_y * 1*0.75*0.5;
+                x = gamepad1.right_stick_x * 1.1 * -0.75*0.5;
+                rx = -gamepad1.left_stick_x * 0.6 * -0.9*0.7;
             }else {
-                y = gamepad1.right_stick_y * 1 * 0.75;
-                x = -gamepad1.right_stick_x * 1.1 * -0.75;
-                rx = gamepad1.left_stick_x * 0.6 * -0.9;
+                y = -gamepad1.right_stick_y * 1 * 0.75;
+                x = gamepad1.right_stick_x * 1.1 * -0.75;
+                rx = -gamepad1.left_stick_x * 0.6 * -0.9;
             }
             denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
             BackLeft.setPower((y + x + rx) / denominator);
@@ -78,5 +65,4 @@ public class DriveYuh extends LinearOpMode {
         }
 
     }
-
 }
