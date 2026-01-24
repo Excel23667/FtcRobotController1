@@ -58,14 +58,10 @@ public class LeagueMeet1AutoFront extends LinearOpMode {
         BackRight.setPower(((y - x) - rx) / denominator);
         FrontRight.setPower(((y + x) - rx) / denominator);
         sleep(1400);
-        y = 0;
-        x = 0;
-        rx =0;
-        denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
-        BackLeft.setPower((y + x + rx) / denominator);
-        FrontLeft.setPower(((y - x) + rx) / denominator);
-        BackRight.setPower(((y - x) - rx) / denominator);
-        FrontRight.setPower(((y + x) - rx) / denominator);
+        BackLeft.setPower(0);
+        FrontLeft.setPower(0);
+        BackRight.setPower(0);
+        FrontRight.setPower(0);
 
         Shooter.setPower(0.57);
         sleep(5000);

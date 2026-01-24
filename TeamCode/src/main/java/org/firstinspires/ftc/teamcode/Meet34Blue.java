@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
-@TeleOp(name = "RedMeet4")
-public class Meet3and4 extends LinearOpMode {
+@TeleOp(name = "BlueMeet4")
+public class Meet34Blue extends LinearOpMode {
 
     private DcMotor FrontLeft;
     private DcMotor BackRight;
@@ -36,7 +36,7 @@ public class Meet3and4 extends LinearOpMode {
     static final double kI =0.000001;
     static final double kD =0.0021;
     static final double TURRET_MIN = -150;
-    static final double TURRET_MAX = 210;
+    static final double TURRET_MAX = 290;
     static final double AIM_TOLERANCE = 1.0;
     double lastError = 0;
     double integralSum = 0;
@@ -68,7 +68,7 @@ public class Meet3and4 extends LinearOpMode {
         BackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         limelight3A = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight3A.pipelineSwitch(8);
+        limelight3A.pipelineSwitch(7);
 
         turret = hardwareMap.get(DcMotor.class,"Turret");
         turret.setDirection(DcMotor.Direction.REVERSE);

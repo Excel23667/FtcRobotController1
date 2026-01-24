@@ -6,12 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
-@Disabled
+@TeleOp
 
 public class AprilTagLimelightTest extends LinearOpMode {
 
@@ -19,7 +20,14 @@ public class AprilTagLimelightTest extends LinearOpMode {
     int  cticks;
     private Limelight3A limelight3A;
     private DcMotor turret;
-   // private IMU imu;
+    static final double kP =0.02;
+    static final double kI =0.0;
+    static final double kD =0.02;
+    static final double TURRET_MIN = -300;
+    static final double TURRET_MAX = 160;
+    static final double AIM_TOLERANCE = 1.0;
+    double lastError =0;
+    double integralSum = 0;
 
     @Override
     public void runOpMode() {
@@ -28,7 +36,7 @@ public class AprilTagLimelightTest extends LinearOpMode {
         limelight3A.pipelineSwitch(8);
 
         turret = hardwareMap.get(DcMotor.class,"Turret");
-        turret.setDirection(DcMotor.Direction.FORWARD);
+        turret.setDirection(DcMotor.Direction.REVERSE);
 
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -49,7 +57,20 @@ public class AprilTagLimelightTest extends LinearOpMode {
                 telemetry.addData("BotPose",botpose.toString());
                 telemetry.addData("Yaw", botpose.getOrientation().getYaw());
                 telemetry.update();
-                turret.setPower(offset * 0.035);
+                double error = llResult.getTx();
+                integralSum += error;
+                double derivative = error - lastError;
+
+                double output = kP * error + kI * integralSum + kD * derivative;
+
+                lastError = error;
+
+                if (turret.getCurrentPosition() > TURRET_MIN && turret.getCurrentPosition() < TURRET_MAX){
+                    turret.setPower(output);
+                }else {
+                    turret.setPower(0);
+                }
+
             }else {
                 turret.setPower(0);
             }
