@@ -4,6 +4,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -24,7 +25,7 @@ public class Meet34Blue extends LinearOpMode {
     private DcMotorEx shooterLeft;
     private DcMotor turret;
     private Servo hood;
-    private Servo stopper;
+    private CRServo stopper;
     double y;
     double x;
     double rx;
@@ -36,7 +37,7 @@ public class Meet34Blue extends LinearOpMode {
     static final double kI =0.000001;
     static final double kD =0.0021;
     static final double TURRET_MIN = -150;
-    static final double TURRET_MAX = 290;
+    static final double TURRET_MAX = 210;
     static final double AIM_TOLERANCE = 1.0;
     double lastError = 0;
     double integralSum = 0;
@@ -52,7 +53,7 @@ public class Meet34Blue extends LinearOpMode {
         shooterRight = hardwareMap.get(DcMotorEx.class, "ShooterRight");
         intake = hardwareMap.get(DcMotor.class, "Intake");
         hood = hardwareMap.get(Servo.class, "Hood");
-        stopper = hardwareMap.get(Servo.class, "Stopper");
+        stopper = hardwareMap.get(CRServo.class, "Stopper");
 
         FrontLeft.setDirection(DcMotor.Direction.FORWARD);
         BackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -81,8 +82,7 @@ public class Meet34Blue extends LinearOpMode {
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        hood.setPosition(0.65);
-        stopper.setPosition(0.4);
+        hood.setPosition(0.7);
 
         limelight3A.start();
 
@@ -116,6 +116,7 @@ public class Meet34Blue extends LinearOpMode {
             telemetry.update();
 
             intake.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
+            stopper.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
 
             LLResult llResult = limelight3A.getLatestResult();
             if (llResult != null && llResult.isValid()) {
@@ -150,6 +151,7 @@ public class Meet34Blue extends LinearOpMode {
                         BackRight.setPower(((y - x) - rx) / denominator);
                         FrontRight.setPower(((y + x) - rx) / denominator);
                         intake.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
+                        stopper.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
                     }
                     turret.setPower(0);
                     turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -168,6 +170,7 @@ public class Meet34Blue extends LinearOpMode {
                         BackRight.setPower(((y - x) - rx) / denominator);
                         FrontRight.setPower(((y + x) - rx) / denominator);
                         intake.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
+                        stopper.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
                     }
                     turret.setPower(0);
                     turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -197,6 +200,7 @@ public class Meet34Blue extends LinearOpMode {
                     BackRight.setPower(((y - x) - rx) / denominator);
                     FrontRight.setPower(((y + x) - rx) / denominator);
                     intake.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
+                    stopper.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
                 }
                 turret.setPower(0);
                 turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -215,6 +219,7 @@ public class Meet34Blue extends LinearOpMode {
                     BackRight.setPower(((y - x) - rx) / denominator);
                     FrontRight.setPower(((y + x) - rx) / denominator);
                     intake.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
+                    stopper.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
                 }
                 turret.setPower(0);
                 turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -225,15 +230,16 @@ public class Meet34Blue extends LinearOpMode {
                 shooterLeft.setVelocity(0);
             }
             if (gamepad1.y){
-                shooterRight.setVelocity(2075);
-                shooterLeft.setVelocity(2075);
-                hood.setPosition(0.9);
+                shooterRight.setVelocity(1600);
+                shooterLeft.setVelocity(1600);
+                hood.setPosition(1);
             }
             if (gamepad1.b){
-                shooterRight.setVelocity(1650);
-                shooterLeft.setVelocity(1650);
-                hood.setPosition(0.65);
+                shooterRight.setVelocity(1400);
+                shooterLeft.setVelocity(1400);
+                hood.setPosition(1);
             }
+
         }
     }
 }

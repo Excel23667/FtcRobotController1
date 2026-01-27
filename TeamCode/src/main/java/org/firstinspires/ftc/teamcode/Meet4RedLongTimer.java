@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 @Disabled
-@Autonomous(name = "RedFront4Timer")
-public class Meet4RedFrontTimer extends LinearOpMode {
+@Autonomous(name = "RedLong4Timer")
+public class Meet4RedLongTimer extends LinearOpMode {
 
     private DcMotor FrontLeft;
     private DcMotor BackRight;
@@ -88,7 +88,7 @@ public class Meet4RedFrontTimer extends LinearOpMode {
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        hood.setPosition(0.7);
+        hood.setPosition(0.65);
         //stopper.setPosition(0.4);
 
         limelight3A.start();
@@ -125,21 +125,21 @@ public class Meet4RedFrontTimer extends LinearOpMode {
             }
 
             if (step == 0){
-                y = -0.4;
-                x = -0.2;
-                rx =0;
+                y = 0;
+                x = 0;
+                rx =0.4;
                 denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
                 BackLeft.setPower((y + x + rx) / denominator);
                 FrontLeft.setPower(((y - x) + rx) / denominator);
                 BackRight.setPower(((y - x) - rx) / denominator);
                 FrontRight.setPower(((y + x) - rx) / denominator);
-                if (timer.seconds() >= 1.8){
+                if (timer.seconds() >= 0.2){
                     BackLeft.setPower(0);
                     FrontLeft.setPower(0);
                     BackRight.setPower(0);
                     FrontRight.setPower(0);
-                    shooterRight.setVelocity(1350);
-                    shooterLeft.setVelocity(1350);
+                    shooterRight.setVelocity(1875);
+                    shooterLeft.setVelocity(1875);
                     step = 1;
                     timer.reset();
                 }
@@ -184,8 +184,8 @@ public class Meet4RedFrontTimer extends LinearOpMode {
                     intake.setPower(0);
                     shooterRight.setVelocity(0);
                     shooterLeft.setVelocity(0);
-                    y = 0;
-                    x = -0.4;
+                    y = 0.4;
+                    x = 0;
                     rx =0;
                     denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
                     BackLeft.setPower((y + x + rx) / denominator);
@@ -197,7 +197,7 @@ public class Meet4RedFrontTimer extends LinearOpMode {
                 }
             }else if (step == 7) {
 
-                if (timer.seconds() >= 1){
+                if (timer.seconds() >= 0.8){
                     BackLeft.setPower(0);
                     FrontLeft.setPower(0);
                     BackRight.setPower(0);
