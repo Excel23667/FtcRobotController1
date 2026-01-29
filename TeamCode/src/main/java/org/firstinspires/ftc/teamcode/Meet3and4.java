@@ -110,7 +110,7 @@ public class Meet3and4 extends LinearOpMode {
             FrontRight.setPower(((y + x) - rx) / denominator);
 
             telemetry.addData("Left Stick X", gamepad1.left_stick_x);
-            telemetry.addData("Right Stick X", gamepad1.right_stick_y);
+            telemetry.addData("Right Stick X", gamepad1.right_stick_x);
             telemetry.addData("Right Stick Y", gamepad1.right_stick_y);
             telemetry.addData("Tick",turret.getCurrentPosition());
             telemetry.update();

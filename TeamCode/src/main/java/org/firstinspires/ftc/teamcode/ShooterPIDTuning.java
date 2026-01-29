@@ -12,12 +12,12 @@ public class ShooterPIDTuning extends LinearOpMode {
 
     public DcMotorEx shooterRight;
     public DcMotorEx shooterLeft;
-    public double lowVelocity  = 1400;
-    public double highVelocity = 1200;
+    public double lowVelocity  = 1000;
+    public double highVelocity = 1600;
     double curTargetVelocity = highVelocity;
     double F;
     double P;
-    double[] stepSizes = {10.0, 1.0, 0.1, 0.001, 0.0001};
+    double[] stepSizes = {10.0, 1.0, 0.1, 0.01, 0.001, 0.0001};
     int stepIndex = 1;
 
     @Override
@@ -36,6 +36,7 @@ public class ShooterPIDTuning extends LinearOpMode {
         shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         telemetry.addLine("Init Complete");
+        telemetry.update();
 
         waitForStart();
 
@@ -90,7 +91,8 @@ public class ShooterPIDTuning extends LinearOpMode {
             telemetry.addLine("---------------------------------------------------------");
             telemetry.addData("Tuning P","%.4f (D-Pad U/D)", P);
             telemetry.addData("Tuning F","%.4f (D-Pad L/R)", F);
-            telemetry.addData("Step Size", "%.4f (Button)", stepSizes[stepIndex]);
+            telemetry.addData("Step Size", "%.4f (B Button)", stepSizes[stepIndex]);
+            telemetry.update();
 
         }
 
