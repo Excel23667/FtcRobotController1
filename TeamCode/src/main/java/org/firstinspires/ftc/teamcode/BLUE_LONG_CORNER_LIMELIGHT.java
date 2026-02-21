@@ -74,7 +74,7 @@ public class BLUE_LONG_CORNER_LIMELIGHT extends OpMode {
 
     private final Pose startPose = new Pose(144-81,9.6,Math.toRadians(90));
     private final Pose shootPose = new Pose(144-86.57943925233647,18.26168224299067,Math.toRadians(180-67));
-    private final Pose preBallCollect1 = new Pose(144-137,22.5,Math.toRadians(280+58));
+    private final Pose preBallCollect1 = new Pose(144-137,22.5,Math.toRadians(180+58));
     private final Pose ballCollect1 = new Pose(144-137,5.700934579439238,Math.toRadians(180+58));
     private final Pose leavePose = new Pose(144-118.65420560747667,14.775700934579435,Math.toRadians(90));
 
@@ -110,9 +110,9 @@ public class BLUE_LONG_CORNER_LIMELIGHT extends OpMode {
                 break;
             case SHOOTER_WARMUP_PRE:
                 //is follower done its path
-                hood.setPosition(0.8);
-                shooterRight.setVelocity(1750);
-                shooterLeft.setVelocity(1750);
+                hood.setPosition(0.5);
+                shooterRight.setVelocity(1800);
+                shooterLeft.setVelocity(1800);
                 stopper.setPosition(1);
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 4){
                     intake.setPower(1);
@@ -261,7 +261,7 @@ public class BLUE_LONG_CORNER_LIMELIGHT extends OpMode {
         shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
-        hood.setPosition(1);
+        hood.setPosition(0.5);
         stopper.setPosition(1);
         limelight3A.start();
 

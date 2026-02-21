@@ -85,12 +85,12 @@ public class BLUE_SHORT_9_BALL extends OpMode {
 
     private final Pose startPose = new Pose(144-122.24299065420558,121.21495327102804,Math.toRadians(180-37));
     private final Pose shootPose = new Pose(144-85.68224299065416,94.93457943925233,Math.toRadians(180-42));
-    private final Pose preBallCollect1 = new Pose(144-94.36448598130843,82.6,Math.toRadians(0));
-    private final Pose ballCollect1 = new Pose(144-126.9,82.6,Math.toRadians(0));
-    private final Pose preBallCollect2 = new Pose(144-94.36448598130843,58.5,Math.toRadians(0));
-    private final Pose ballCollect2 = new Pose(144-136.54485981308412,58.5,Math.toRadians(0));
-    private final Pose preShootFromCollect = new Pose(144-113.94579439252337,58.5,Math.toRadians(0));
-    private final Pose leavePose = new Pose(144-107.90654205607477,75.77570093457945,Math.toRadians(0));
+    private final Pose preBallCollect1 = new Pose(144-94.36448598130843,82.6,Math.toRadians(180));
+    private final Pose ballCollect1 = new Pose(144-126.9,82.6,Math.toRadians(180));
+    private final Pose preBallCollect2 = new Pose(144-94.36448598130843,58.5,Math.toRadians(180));
+    private final Pose ballCollect2 = new Pose(144-136.54485981308412,58.5,Math.toRadians(180));
+    private final Pose preShootFromCollect = new Pose(144-113.94579439252337,58.5,Math.toRadians(180));
+    private final Pose leavePose = new Pose(144-107.90654205607477,75.77570093457945,Math.toRadians(180));
 
     private PathChain driveStartPosShootPos, driveShootToPreBallCollect1, drivePreToBallCollect1,driveCollect1ToShoot,driveShootToPreBallCollect2,drivePreToBallCollect2,driveCollect2ToPreShoot,drivePreShootToShoot,driveShootToLeave;
     public void buildPaths(){

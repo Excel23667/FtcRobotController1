@@ -153,7 +153,7 @@ public class RED_SHORT_9_BALL_GATE extends OpMode {
                 break;
             case SHOOTER_WARMUP_PRE:
                 //is follower done its path
-                hood.setPosition(0.6);
+                hood.setPosition(0.5);
                 shooterRight.setVelocity(1600);
                 shooterLeft.setVelocity(1600);
                 stopper.setPosition(1);

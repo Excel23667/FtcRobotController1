@@ -110,9 +110,9 @@ public class RED_LONG_CORNER_LIMELIGHT extends OpMode {
                 break;
             case SHOOTER_WARMUP_PRE:
                 //is follower done its path
-                hood.setPosition(0.8);
-                shooterRight.setVelocity(1750);
-                shooterLeft.setVelocity(1750);
+                hood.setPosition(0.5);
+                shooterRight.setVelocity(1800);
+                shooterLeft.setVelocity(1800);
                 stopper.setPosition(1);
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 4){
                     intake.setPower(1);
@@ -261,7 +261,7 @@ public class RED_LONG_CORNER_LIMELIGHT extends OpMode {
         shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
-        hood.setPosition(1);
+        hood.setPosition(0.5);
         stopper.setPosition(1);
         limelight3A.start();
 

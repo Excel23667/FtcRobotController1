@@ -242,9 +242,9 @@ public class RED_TELEOP extends LinearOpMode {
                 stopper.setPosition(0.5);
             }
             if (gamepad1.y){
-                shooterRight.setVelocity(1850);
-                shooterLeft.setVelocity(1850);
-                hood.setPosition(0.6);
+                shooterRight.setVelocity(1800);
+                shooterLeft.setVelocity(1800);
+                hood.setPosition(0.5);
                 stopper.setPosition(1);
             }
             if (gamepad1.b){
