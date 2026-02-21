@@ -22,8 +22,8 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Disabled
-@Autonomous(name = "RED SHORT",group = "RED")
-public class SampleAuto extends OpMode {
+@Autonomous(name = "RED LONG",group = "RED")
+public class RED_LONG extends OpMode {
     private DcMotor intake;
     private DcMotorEx shooterRight;
     private DcMotorEx shooterLeft;
@@ -73,11 +73,11 @@ public class SampleAuto extends OpMode {
     }
     PathState pathState;
 
-    private final Pose startPose = new Pose(122.24299065420558,121.21495327102804,Math.toRadians(37));
-    private final Pose shootPose = new Pose(85.68224299065416,94.93457943925233,Math.toRadians(42));
-    private final Pose preBallCollect1 = new Pose(94.36448598130843,82.6,Math.toRadians(0));
-    private final Pose ballCollect1 = new Pose(126.9,82.6,Math.toRadians(0));
-    private final Pose leavePose = new Pose(107.90654205607477,75.77570093457945,Math.toRadians(0));
+    private final Pose startPose = new Pose(81,11.757009345794401,Math.toRadians(90));
+    private final Pose shootPose = new Pose(86.57943925233647,18.26168224299067,Math.toRadians(68));
+    private final Pose preBallCollect1 = new Pose(86.57943925233647,35.475700934579436,Math.toRadians(0));
+    private final Pose ballCollect1 = new Pose(131.37383177570098,38,Math.toRadians(0));
+    private final Pose leavePose = new Pose(75,41.925233644859816,Math.toRadians(0));
 
     private PathChain driveStartPosShootPos, driveShootToPreBallCollect1, drivePreToBallCollect1,driveCollect1ToShoot,driveShootToLeave;
     public void buildPaths(){
@@ -248,24 +248,24 @@ public class SampleAuto extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "Intake");
         hood = hardwareMap.get(Servo.class, "Hood");
         turret = hardwareMap.get(DcMotor.class,"Turret");
-       // limelight3A = hardwareMap.get(Limelight3A.class, "limelight");
-      //  limelight3A.pipelineSwitch(8);
+        // limelight3A = hardwareMap.get(Limelight3A.class, "limelight");
+        //  limelight3A.pipelineSwitch(8);
         turret = hardwareMap.get(DcMotor.class,"Turret");
         stopper = hardwareMap.get(Servo.class, "Stopper");
         turret.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-       // turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-       // turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
-        hood.setPosition(0.6);
+        hood.setPosition(1);
         stopper.setPosition(1);
-    //    limelight3A.start();
+        //    limelight3A.start();
 
        /* turret.setPower(0);
         turret.setTargetPosition(100);

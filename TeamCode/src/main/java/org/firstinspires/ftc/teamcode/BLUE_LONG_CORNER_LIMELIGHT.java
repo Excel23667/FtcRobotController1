@@ -8,7 +8,6 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,32 +20,32 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-@Disabled
-@Autonomous(name = "RED SHORT",group = "RED")
-public class SampleAuto extends OpMode {
+
+@Autonomous(name = "BLUE LONG CORNER LIMELIGHT",group = "BLUE")
+public class BLUE_LONG_CORNER_LIMELIGHT extends OpMode {
     private DcMotor intake;
     private DcMotorEx shooterRight;
     private DcMotorEx shooterLeft;
     private DcMotor turret;
     private Servo hood;
     private Servo stopper;
-    /*double offset;
+    double offset;
     int  cticks;
     private Limelight3A limelight3A;
     static final double kP =0.008;
     static final double kI =0.000001;
     static final double kD =0.0021;
-    static final double TURRET_MIN = -150;
-    static final double TURRET_MAX = 210;
+    static final double TURRET_RIGHT_NEGATIVE= -160;
+    static final double TURRET_LEFT_POSITIVE = 160;
     static final double AIM_TOLERANCE = 1.0;
     double lastError = 0;
-    double integralSum = 0;*/
+    double integralSum = 0;
     //double output;
     private Follower follower;
     private Timer pathTimer, opModeTimer;
     ElapsedTime stateTimer = new ElapsedTime();
-    PIDFCoefficients shooterPIDF = new PIDFCoefficients(1,0,0,13.42);
-    double output;
+    PIDFCoefficients shooterPIDF = new PIDFCoefficients(1.5,0,0,14.2);
+    //double output;
 
     public enum PathState{
         //Start-End
@@ -73,21 +72,21 @@ public class SampleAuto extends OpMode {
     }
     PathState pathState;
 
-    private final Pose startPose = new Pose(122.24299065420558,121.21495327102804,Math.toRadians(37));
-    private final Pose shootPose = new Pose(85.68224299065416,94.93457943925233,Math.toRadians(42));
-    private final Pose preBallCollect1 = new Pose(94.36448598130843,82.6,Math.toRadians(0));
-    private final Pose ballCollect1 = new Pose(126.9,82.6,Math.toRadians(0));
-    private final Pose leavePose = new Pose(107.90654205607477,75.77570093457945,Math.toRadians(0));
+    private final Pose startPose = new Pose(144-81,9.6,Math.toRadians(90));
+    private final Pose shootPose = new Pose(144-86.57943925233647,18.26168224299067,Math.toRadians(180-67));
+    private final Pose preBallCollect1 = new Pose(144-137,22.5,Math.toRadians(280+58));
+    private final Pose ballCollect1 = new Pose(144-137,5.700934579439238,Math.toRadians(180+58));
+    private final Pose leavePose = new Pose(144-118.65420560747667,14.775700934579435,Math.toRadians(90));
 
     private PathChain driveStartPosShootPos, driveShootToPreBallCollect1, drivePreToBallCollect1,driveCollect1ToShoot,driveShootToLeave;
     public void buildPaths(){
         driveStartPosShootPos = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, shootPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(),shootPose.getHeading(),0.7)
+                .setLinearHeadingInterpolation(startPose.getHeading(),shootPose.getHeading(),0.8)
                 .build();
         driveShootToPreBallCollect1 = follower.pathBuilder()
                 .addPath(new BezierLine(shootPose,preBallCollect1))
-                .setLinearHeadingInterpolation(shootPose.getHeading(),preBallCollect1.getHeading())
+                .setLinearHeadingInterpolation(shootPose.getHeading(),preBallCollect1.getHeading(),0.7)
                 .build();
         drivePreToBallCollect1 = follower.pathBuilder()
                 .addPath(new BezierLine(preBallCollect1,ballCollect1))
@@ -95,7 +94,7 @@ public class SampleAuto extends OpMode {
                 .build();
         driveCollect1ToShoot = follower.pathBuilder()
                 .addPath(new BezierLine(ballCollect1,shootPose))
-                .setLinearHeadingInterpolation(ballCollect1.getHeading(), shootPose.getHeading(),0.7)
+                .setLinearHeadingInterpolation(ballCollect1.getHeading(), shootPose.getHeading(),0.9)
                 .build();
         driveShootToLeave = follower.pathBuilder()
                 .addPath(new BezierLine(shootPose,leavePose))
@@ -111,11 +110,11 @@ public class SampleAuto extends OpMode {
                 break;
             case SHOOTER_WARMUP_PRE:
                 //is follower done its path
-                hood.setPosition(0.6);
-                shooterRight.setVelocity(1300);
-                shooterLeft.setVelocity(1300);
+                hood.setPosition(0.8);
+                shooterRight.setVelocity(1750);
+                shooterLeft.setVelocity(1750);
                 stopper.setPosition(1);
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3.5){
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 4){
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_PRE1);
                 }
@@ -133,7 +132,7 @@ public class SampleAuto extends OpMode {
                 }
                 break;
             case SHOOTING_PRE2:
-                if (pathTimer.getElapsedTimeSeconds()>0.5){
+                if (pathTimer.getElapsedTimeSeconds()>0.3){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_PRE3);
                 }
@@ -150,19 +149,19 @@ public class SampleAuto extends OpMode {
                 }
                 break;
             case DRIVE_SHOOT_TO_PRE_COLLECT1:
-                stopper.setPosition(0.55);
+                stopper.setPosition(0.5);
+                follower.setMaxPower(0.65);
                 follower.followPath(driveShootToPreBallCollect1,true);
                 setPathState(PathState.DRIVE_COLLECT1);
                 break;
             case DRIVE_COLLECT1:
                 if (!follower.isBusy()){
-                    follower.setMaxPower(0.4);
                     follower.followPath(drivePreToBallCollect1,true);
                     setPathState(PathState.DRIVE_COLLECT1_TO_SHOOT);
                 }
                 break;
             case DRIVE_COLLECT1_TO_SHOOT:
-                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 4){
+                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 6){
                     follower.setMaxPower(1);
                     intake.setPower(0);
                     follower.followPath(driveCollect1ToShoot,true);
@@ -177,7 +176,7 @@ public class SampleAuto extends OpMode {
                 break;
             case SHOOTER_WARMUP_1BALLS:
                 //is follower done its path
-                if (pathTimer.getElapsedTimeSeconds()>0.2) {
+                if (pathTimer.getElapsedTimeSeconds()>0.6) {
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_BALL1_1);
                 }
@@ -189,19 +188,19 @@ public class SampleAuto extends OpMode {
                 }
                 break;
             case WARMUP_BALL1_2:
-                if (pathTimer.getElapsedTimeSeconds()>1.5){
+                if (pathTimer.getElapsedTimeSeconds()>1.8){
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_BALL1_2);
                 }
                 break;
             case SHOOTING_BALL1_2:
-                if (pathTimer.getElapsedTimeSeconds()>0.4){
+                if (pathTimer.getElapsedTimeSeconds()>0.3){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_BALL1_3);
                 }
                 break;
             case WARMUP_BALL1_3:
-                if (pathTimer.getElapsedTimeSeconds()>1.5){
+                if (pathTimer.getElapsedTimeSeconds()>1.8){
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_BALL1_3);
                 }
@@ -248,24 +247,23 @@ public class SampleAuto extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "Intake");
         hood = hardwareMap.get(Servo.class, "Hood");
         turret = hardwareMap.get(DcMotor.class,"Turret");
-       // limelight3A = hardwareMap.get(Limelight3A.class, "limelight");
-      //  limelight3A.pipelineSwitch(8);
-        turret = hardwareMap.get(DcMotor.class,"Turret");
+        limelight3A = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight3A.pipelineSwitch(7);
         stopper = hardwareMap.get(Servo.class, "Stopper");
         turret.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-       // turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-       // turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
-        hood.setPosition(0.6);
+        hood.setPosition(1);
         stopper.setPosition(1);
-    //    limelight3A.start();
+        limelight3A.start();
 
        /* turret.setPower(0);
         turret.setTargetPosition(100);
@@ -289,7 +287,7 @@ public class SampleAuto extends OpMode {
         follower.update();
         statePathUpdate();
 
-        /*LLResult llResult = limelight3A.getLatestResult();
+        LLResult llResult = limelight3A.getLatestResult();
         if (llResult != null && llResult.isValid()) {
             offset = llResult.getTx();
             Pose3D botpose = llResult.getBotpose();
@@ -298,23 +296,27 @@ public class SampleAuto extends OpMode {
             telemetry.addData("Ta", llResult.getTa());
             telemetry.addData("BotPose", botpose.toString());
             telemetry.addData("Yaw", botpose.getOrientation().getYaw());
-            telemetry.update();
+            //telemetry.update();
             double error = llResult.getTx();
             integralSum += error;
             double derivative = error - lastError;
 
-            output = kP * error + kI * integralSum + kD * derivative;
+            double output = kP * error + kI * integralSum + kD * derivative;
+
+            telemetry.addData("OUTPUT",output);
+            telemetry.update();
 
             lastError = error;
-        }else if (turret.getCurrentPosition() > -180 && turret.getCurrentPosition() < 160) {
-            if(llResult.getTx() <0.5 && llResult.getTx()>-0.5){
-                turret.setPower(0);
-            }else {
-                turret.setPower(output);
+            if (turret.getCurrentPosition() > -160 && turret.getCurrentPosition() < 160) {
+                if(llResult.getTx() <0.5 && llResult.getTx()>-0.5){
+                    turret.setPower(0);
+                }else {
+                    turret.setPower(output);
+                }
             }
         } else {
             turret.setPower(0);
-        }*/
+        }
         turret.setPower(0);
         telemetry.addData("path state", pathState.toString());
         telemetry.addData("x",follower.getPose().getX());
