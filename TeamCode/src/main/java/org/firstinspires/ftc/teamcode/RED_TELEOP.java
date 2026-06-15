@@ -101,7 +101,7 @@ public class RED_TELEOP extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.left_bumper) {
-                y = -gamepad1.right_stick_y * 1 * 0.749 * 0.5;
+                y = -gamepad1.right_stick_y * 1 * 0.75 * 0.5;
                 x = gamepad1.right_stick_x * 1.1 * -0.75 * 0.5;
                 rx = -gamepad1.left_stick_x * 0.6 * -0.9 * 0.7;
             } else {
