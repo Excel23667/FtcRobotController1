@@ -84,7 +84,7 @@ public class RED_SHORT_9_BALL extends OpMode {
     PathState pathState;
 
     private final Pose startPose = new Pose(122.24299065420558,121.21495327102804,Math.toRadians(37));
-    private final Pose shootPose = new Pose(85.68224299065416,94.93457943925233,Math.toRadians(37));
+    private final Pose shootPose = new Pose(85.68224299065416,94.93457943925233,Math.toRadians(36));
     private final Pose preBallCollect1 = new Pose(94.36448598130843,82.6,Math.toRadians(0));
     private final Pose ballCollect1 = new Pose(126.9,82.6,Math.toRadians(0));
     private final Pose preBallCollect2 = new Pose(94.36448598130843,58.5,Math.toRadians(0));

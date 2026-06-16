@@ -36,7 +36,7 @@ public class RED_TELEOP extends LinearOpMode {
     private Limelight3A limelight3A;
     static final double kP =0.014;
     static final double kI =0;
-    static final double kD =0.015;
+    static final double kD =0.03;
     static final double TURRET_RIGHT_NEGATIVE= -85;
     static final double TURRET_LEFT_POSITIVE = 600;
     static final double AIM_TOLERANCE = 1.0;
@@ -177,7 +177,8 @@ public class RED_TELEOP extends LinearOpMode {
                     }
                     turret.setPower(0);
                     turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                } else if (turret.getCurrentPosition() > TURRET_RIGHT_NEGATIVE && turret.getCurrentPosition() < TURRET_LEFT_POSITIVE) {
+                } else if (turret.getCurrentPosition() >
+                        TURRET_RIGHT_NEGATIVE && turret.getCurrentPosition() < TURRET_LEFT_POSITIVE) {
                     if(llResult.getTx() <0.5 && llResult.getTx()>-0.5){
                         turret.setPower(0);
                     }else {
@@ -187,7 +188,33 @@ public class RED_TELEOP extends LinearOpMode {
                     turret.setPower(0);
                 }
 
-            }//else {
+            }
+
+            /*else {
+                turret.setPower(0);
+                turret.setTargetPosition(0);
+                turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (turret.getCurrentPosition()<0){
+                    turret.setPower(-0.5);
+                }else {
+                    turret.setPower(0.5);
+                }
+                while (turret.isBusy()){
+                    y = -gamepad1.right_stick_y * 1 * 1;
+                    x = gamepad1.right_stick_x * 1.1 * -1;
+                    rx = -gamepad1.left_stick_x * 0.6 * -1;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
+                    intake.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
+                }
+                turret.setPower(0);
+                turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }*/
+
+            //else {
                 //turret.setPower(0);
           //  }
             if (turret.getCurrentPosition() >= TURRET_LEFT_POSITIVE){

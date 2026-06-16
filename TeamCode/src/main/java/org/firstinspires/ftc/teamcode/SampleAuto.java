@@ -322,6 +322,8 @@ public class SampleAuto extends OpMode {
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.addData("State Timer",stateTimer.seconds());
         telemetry.update();
+
+
     }
 
 }
