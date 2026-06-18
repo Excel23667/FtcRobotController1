@@ -71,8 +71,9 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
         SHOOTING_BALL1_3,
         DRIVE_SHOOT_TO_PRE_COLLECT2,
         DRIVE_COLLECT2,
-        DRIVE_COLLECT2_TO_PRE_SHOOT,
-        DRIVE_PRE_SHOOT_TO_SHOOT,
+        DRIVE_COLLECT2_TO_PRE_GATE,
+        DRIVE_PRE_GATE_TO_GATE2,
+        DRIVE_GATE_TO_SHOOT2,
         REVERSE_BALL_2,
         SHOOTER_WARMUP_2BALLS,
         SHOOTING_BALL2_1,
@@ -86,22 +87,22 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
     }
     PathState pathState;
 
-    private final Pose startPose = new Pose(144-122.24299065420558,121.21495327102804,Math.toRadians(180-37));
-    private final Pose shootPose = new Pose(144-85.68224299065416,94.93457943925233,Math.toRadians(180-42));
-    private final Pose preBallCollect1 = new Pose(144-94.36448598130843,82.6,Math.toRadians(180));
-    private final Pose ballCollect1 = new Pose(144-126.9,82.6,Math.toRadians(180));
-    private final Pose preGate = new Pose(144-113.94579439252337,69.3,Math.toRadians(180));
-    private final Pose gate = new Pose(144-126,69.3,Math.toRadians(180));
-    private final Pose preBallCollect2 = new Pose(144-94.36448598130843,58.5,Math.toRadians(180));
-    private final Pose ballCollect2 = new Pose(144-136.54485981308412,58.5,Math.toRadians(180));
-    private final Pose preShootFromCollect = new Pose(144-113.94579439252337,58.5,Math.toRadians(180));
-    private final Pose leavePose = new Pose(144-107.90654205607477,75.77570093457945,Math.toRadians(180));
+    private final Pose startPose = new Pose(144-122.84112149532712,122.39252336448601,Math.toRadians(90-37));
+    private final Pose shootPose = new Pose(144-85.68224299065416,94.93457943925233,Math.toRadians(90-36));
+    private final Pose preBallCollect1 = new Pose(144-94.36448598130843,82.6,Math.toRadians(90));
+    private final Pose ballCollect1 = new Pose(144-126.9,82.6,Math.toRadians(90));
+    private final Pose preGate = new Pose(144-113.94579439252337,74.5,Math.toRadians(90));
+    private final Pose gate = new Pose(144-126,74.5,Math.toRadians(90));
+    private final Pose preBallCollect2 = new Pose(144-94.36448598130843,59,Math.toRadians(90));
+    private final Pose ballCollect2 = new Pose(144-136.54485981308412,59,Math.toRadians(90));
+    private final Pose preShootFromCollect = new Pose(144-113.94579439252337,58.5,Math.toRadians(90));
+    private final Pose leavePose = new Pose(144-107.90654205607477,75.77570093457945,Math.toRadians(90));
 
-    private PathChain driveStartPosShootPos, driveShootToPreBallCollect1, drivePreToBallCollect1,driveShootToPreBallCollect2,drivePreToBallCollect2,driveCollect2ToPreShoot,drivePreShootToShoot,driveShootToLeave,driveCollect1toPreGate,drivePreGateToGate,driveGateToShoot;
+    private PathChain driveStartPosShootPos, driveShootToPreBallCollect1, drivePreToBallCollect1,driveShootToPreBallCollect2,drivePreToBallCollect2,drivePreShootToShoot,driveShootToLeave,driveCollect1toPreGate,drivePreGateToGate,driveGateToShoot,driveCollect2toPreGate,driveGateToShoot2,drivePreGateToGate2;
     public void buildPaths(){
         driveStartPosShootPos = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, shootPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(),shootPose.getHeading(),0.7)
+                .setLinearHeadingInterpolation(startPose.getHeading(),shootPose.getHeading(),0.8)
                 .build();
         driveShootToPreBallCollect1 = follower.pathBuilder()
                 .addPath(new BezierLine(shootPose,preBallCollect1))
@@ -121,7 +122,7 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
                 .build();
         driveGateToShoot = follower.pathBuilder()
                 .addPath(new BezierLine(gate,shootPose))
-                .setLinearHeadingInterpolation(gate.getHeading(), shootPose.getHeading(),0.7)
+                .setLinearHeadingInterpolation(gate.getHeading(), shootPose.getHeading(),0.8)
                 .build();
         driveShootToPreBallCollect2 = follower.pathBuilder()
                 .addPath(new BezierLine(shootPose,preBallCollect2))
@@ -131,13 +132,21 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
                 .addPath(new BezierLine(preBallCollect2,ballCollect2))
                 .setLinearHeadingInterpolation(preBallCollect2.getHeading(),ballCollect2.getHeading())
                 .build();
-        driveCollect2ToPreShoot = follower.pathBuilder()
-                .addPath(new BezierLine(ballCollect2,preShootFromCollect))
-                .setLinearHeadingInterpolation(ballCollect2.getHeading(),preShootFromCollect.getHeading())
+        driveCollect2toPreGate = follower.pathBuilder()
+                .addPath(new BezierLine(ballCollect2,preGate))
+                .setLinearHeadingInterpolation(ballCollect2.getHeading(), preGate.getHeading())
+                .build();
+        drivePreGateToGate2 = follower.pathBuilder()
+                .addPath(new BezierLine(preGate,gate))
+                .setLinearHeadingInterpolation(preGate.getHeading(), gate.getHeading())
+                .build();
+        driveGateToShoot2 = follower.pathBuilder()
+                .addPath(new BezierLine(gate,shootPose))
+                .setLinearHeadingInterpolation(gate.getHeading(), shootPose.getHeading(),0.8)
                 .build();
         drivePreShootToShoot = follower.pathBuilder()
                 .addPath(new BezierLine(preShootFromCollect,shootPose))
-                .setLinearHeadingInterpolation(preShootFromCollect.getHeading(), shootPose.getHeading(),0.7)
+                .setLinearHeadingInterpolation(preShootFromCollect.getHeading(), shootPose.getHeading(),1.0)
                 .build();
         driveShootToLeave = follower.pathBuilder()
                 .addPath(new BezierLine(shootPose,leavePose))
@@ -153,10 +162,10 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
                 break;
             case SHOOTER_WARMUP_PRE:
                 //is follower done its path
-                hood.setPosition(0.5);
-                shooterRight.setVelocity(1600);
-                shooterLeft.setVelocity(1600);
-                stopper.setPosition(1);
+                hood.setPosition(0.55);
+                shooterRight.setVelocity(1650);
+                shooterLeft.setVelocity(1650);
+                stopper.setPosition(0.05);
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2.5){
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_PRE1);
@@ -175,7 +184,7 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
                 }
                 break;
             case SHOOTING_PRE2:
-                if (pathTimer.getElapsedTimeSeconds()>0.3){
+                if (pathTimer.getElapsedTimeSeconds()>0.2){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_PRE3);
                 }
@@ -192,7 +201,7 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
                 }
                 break;
             case DRIVE_SHOOT_TO_PRE_COLLECT1:
-                stopper.setPosition(0.5);
+                stopper.setPosition(0.17);
                 follower.followPath(driveShootToPreBallCollect1,true);
                 setPathState(PathState.DRIVE_COLLECT1);
                 break;
@@ -204,7 +213,7 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
                 }
                 break;
             case DRIVE_COLLECT1_TO_PRE_GATE:
-                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 2.6){
+                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 2){
                     follower.setMaxPower(1);
                     intake.setPower(0);
                     follower.followPath(driveCollect1toPreGate,true);
@@ -219,7 +228,7 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
                 }
                 break;
             case DRIVE_GATE_TO_SHOOT:
-                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 1.2){
+                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 1.4){
                     follower.setMaxPower(1);
                     follower.followPath(driveGateToShoot,true);
                     setPathState(PathState.REVERSE_BALL_1);
@@ -227,7 +236,7 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
                 break;
             case REVERSE_BALL_1:
                 if (!follower.isBusy()){
-                    stopper.setPosition(1);
+                    stopper.setPosition(0.05);
                     setPathState(PathState.SHOOTER_WARMUP_1BALLS);
                 }
                 break;
@@ -245,19 +254,19 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
                 }
                 break;
             case WARMUP_BALL1_2:
-                if (pathTimer.getElapsedTimeSeconds()>1.5){
+                if (pathTimer.getElapsedTimeSeconds()>1){
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_BALL1_2);
                 }
                 break;
             case SHOOTING_BALL1_2:
-                if (pathTimer.getElapsedTimeSeconds()>0.3){
+                if (pathTimer.getElapsedTimeSeconds()>0.2){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_BALL1_3);
                 }
                 break;
             case WARMUP_BALL1_3:
-                if (pathTimer.getElapsedTimeSeconds()>1.5){
+                if (pathTimer.getElapsedTimeSeconds()>1){
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_BALL1_3);
                 }
@@ -268,7 +277,7 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
                 }
                 break;
             case DRIVE_SHOOT_TO_PRE_COLLECT2:
-                stopper.setPosition(0.5);
+                stopper.setPosition(0.17);
                 follower.followPath(driveShootToPreBallCollect2,true);
                 setPathState(PathState.DRIVE_COLLECT2);
                 break;
@@ -276,26 +285,34 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
                 if (!follower.isBusy()){
                     follower.setMaxPower(0.65);
                     follower.followPath(drivePreToBallCollect2,true);
-                    setPathState(PathState.DRIVE_COLLECT2_TO_PRE_SHOOT);
+                    setPathState(PathState.DRIVE_COLLECT2_TO_PRE_GATE);
                 }
                 break;
-            case DRIVE_COLLECT2_TO_PRE_SHOOT:
+            case DRIVE_COLLECT2_TO_PRE_GATE:
                 if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 2.4){
                     follower.setMaxPower(1);
                     intake.setPower(0);
-                    follower.followPath(driveCollect2ToPreShoot,true);
-                    setPathState(PathState.DRIVE_PRE_SHOOT_TO_SHOOT);
+                    follower.followPath(driveCollect2toPreGate,true);
+                    setPathState(PathState.DRIVE_PRE_GATE_TO_GATE2);
                 }
                 break;
-            case DRIVE_PRE_SHOOT_TO_SHOOT:
+            case DRIVE_PRE_GATE_TO_GATE2:
                 if (!follower.isBusy()){
-                    follower.followPath(drivePreShootToShoot);
+                    follower.setMaxPower(0.6);
+                    follower.followPath(drivePreGateToGate2);
+                    setPathState(PathState.DRIVE_GATE_TO_SHOOT2);
+                }
+                break;
+            case DRIVE_GATE_TO_SHOOT2:
+                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 1.4){
+                    follower.setMaxPower(1);
+                    follower.followPath(driveGateToShoot2,true);
                     setPathState(PathState.REVERSE_BALL_2);
                 }
                 break;
             case REVERSE_BALL_2:
                 if (!follower.isBusy()){
-                    stopper.setPosition(1);
+                    stopper.setPosition(0.05);
                     setPathState(PathState.SHOOTER_WARMUP_2BALLS);
                 }
                 break;
@@ -313,19 +330,19 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
                 }
                 break;
             case WARMUP_BALL2_2:
-                if (pathTimer.getElapsedTimeSeconds()>1.5){
+                if (pathTimer.getElapsedTimeSeconds()>1){
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_BALL2_2);
                 }
                 break;
             case SHOOTING_BALL2_2:
-                if (pathTimer.getElapsedTimeSeconds()>0.3){
+                if (pathTimer.getElapsedTimeSeconds()>0.2){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_BALL2_3);
                 }
                 break;
             case WARMUP_BALL2_3:
-                if (pathTimer.getElapsedTimeSeconds()>1.5){
+                if (pathTimer.getElapsedTimeSeconds()>1){
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_BALL2_3);
                 }
@@ -378,8 +395,8 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
         stopper = hardwareMap.get(Servo.class, "Stopper");
         turret.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        shooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        shooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooterRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        shooterLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         // turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -387,8 +404,8 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
         shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
-        hood.setPosition(0.6);
-        stopper.setPosition(1);
+        hood.setPosition(0.55);
+        stopper.setPosition(0.05);
         //    limelight3A.start();
 
        /* turret.setPower(0);

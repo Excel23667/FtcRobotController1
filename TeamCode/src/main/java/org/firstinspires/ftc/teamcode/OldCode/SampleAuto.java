@@ -1,16 +1,13 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.OldCode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -18,12 +15,10 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Disabled
-@Autonomous(name = "RED LONG CORNER",group = "RED")
-public class RED_LONG_CORNER extends OpMode {
+@Autonomous(name = "RED SHORT",group = "RED")
+public class SampleAuto extends OpMode {
     private DcMotor intake;
     private DcMotorEx shooterRight;
     private DcMotorEx shooterLeft;
@@ -45,7 +40,7 @@ public class RED_LONG_CORNER extends OpMode {
     private Follower follower;
     private Timer pathTimer, opModeTimer;
     ElapsedTime stateTimer = new ElapsedTime();
-    PIDFCoefficients shooterPIDF = new PIDFCoefficients(1.5,0,0,14.2);
+    PIDFCoefficients shooterPIDF = new PIDFCoefficients(1,0,0,13.42);
     double output;
 
     public enum PathState{
@@ -73,21 +68,21 @@ public class RED_LONG_CORNER extends OpMode {
     }
     PathState pathState;
 
-    private final Pose startPose = new Pose(81,11.757009345794401,Math.toRadians(90));
-    private final Pose shootPose = new Pose(86.57943925233647,18.26168224299067,Math.toRadians(67));
-    private final Pose preBallCollect1 = new Pose(137,22.8,Math.toRadians(-58));
-    private final Pose ballCollect1 = new Pose(137,5.700934579439238,Math.toRadians(-58));
-    private final Pose leavePose = new Pose(118.65420560747667,14.775700934579435,Math.toRadians(90));
+    private final Pose startPose = new Pose(122.24299065420558,121.21495327102804,Math.toRadians(37));
+    private final Pose shootPose = new Pose(85.68224299065416,94.93457943925233,Math.toRadians(42));
+    private final Pose preBallCollect1 = new Pose(94.36448598130843,82.6,Math.toRadians(0));
+    private final Pose ballCollect1 = new Pose(126.9,82.6,Math.toRadians(0));
+    private final Pose leavePose = new Pose(107.90654205607477,75.77570093457945,Math.toRadians(0));
 
     private PathChain driveStartPosShootPos, driveShootToPreBallCollect1, drivePreToBallCollect1,driveCollect1ToShoot,driveShootToLeave;
     public void buildPaths(){
         driveStartPosShootPos = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, shootPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(),shootPose.getHeading(),0.6)
+                .setLinearHeadingInterpolation(startPose.getHeading(),shootPose.getHeading(),0.7)
                 .build();
         driveShootToPreBallCollect1 = follower.pathBuilder()
                 .addPath(new BezierLine(shootPose,preBallCollect1))
-                .setLinearHeadingInterpolation(shootPose.getHeading(),preBallCollect1.getHeading(),0.7)
+                .setLinearHeadingInterpolation(shootPose.getHeading(),preBallCollect1.getHeading())
                 .build();
         drivePreToBallCollect1 = follower.pathBuilder()
                 .addPath(new BezierLine(preBallCollect1,ballCollect1))
@@ -95,7 +90,7 @@ public class RED_LONG_CORNER extends OpMode {
                 .build();
         driveCollect1ToShoot = follower.pathBuilder()
                 .addPath(new BezierLine(ballCollect1,shootPose))
-                .setLinearHeadingInterpolation(ballCollect1.getHeading(), shootPose.getHeading(),0.6)
+                .setLinearHeadingInterpolation(ballCollect1.getHeading(), shootPose.getHeading(),0.7)
                 .build();
         driveShootToLeave = follower.pathBuilder()
                 .addPath(new BezierLine(shootPose,leavePose))
@@ -111,11 +106,11 @@ public class RED_LONG_CORNER extends OpMode {
                 break;
             case SHOOTER_WARMUP_PRE:
                 //is follower done its path
-                hood.setPosition(0.8);
-                shooterRight.setVelocity(1750);
-                shooterLeft.setVelocity(1750);
+                hood.setPosition(0.6);
+                shooterRight.setVelocity(1300);
+                shooterLeft.setVelocity(1300);
                 stopper.setPosition(1);
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 4){
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3.5){
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_PRE1);
                 }
@@ -133,7 +128,7 @@ public class RED_LONG_CORNER extends OpMode {
                 }
                 break;
             case SHOOTING_PRE2:
-                if (pathTimer.getElapsedTimeSeconds()>0.3){
+                if (pathTimer.getElapsedTimeSeconds()>0.5){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_PRE3);
                 }
@@ -150,19 +145,19 @@ public class RED_LONG_CORNER extends OpMode {
                 }
                 break;
             case DRIVE_SHOOT_TO_PRE_COLLECT1:
-                stopper.setPosition(0.5);
-                follower.setMaxPower(0.65);
+                stopper.setPosition(0.55);
                 follower.followPath(driveShootToPreBallCollect1,true);
                 setPathState(PathState.DRIVE_COLLECT1);
                 break;
             case DRIVE_COLLECT1:
                 if (!follower.isBusy()){
+                    follower.setMaxPower(0.4);
                     follower.followPath(drivePreToBallCollect1,true);
                     setPathState(PathState.DRIVE_COLLECT1_TO_SHOOT);
                 }
                 break;
             case DRIVE_COLLECT1_TO_SHOOT:
-                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 6){
+                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 4){
                     follower.setMaxPower(1);
                     intake.setPower(0);
                     follower.followPath(driveCollect1ToShoot,true);
@@ -195,7 +190,7 @@ public class RED_LONG_CORNER extends OpMode {
                 }
                 break;
             case SHOOTING_BALL1_2:
-                if (pathTimer.getElapsedTimeSeconds()>0.3){
+                if (pathTimer.getElapsedTimeSeconds()>0.4){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_BALL1_3);
                 }
@@ -248,24 +243,24 @@ public class RED_LONG_CORNER extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "Intake");
         hood = hardwareMap.get(Servo.class, "Hood");
         turret = hardwareMap.get(DcMotor.class,"Turret");
-        // limelight3A = hardwareMap.get(Limelight3A.class, "limelight");
-        //  limelight3A.pipelineSwitch(8);
+       // limelight3A = hardwareMap.get(Limelight3A.class, "limelight");
+      //  limelight3A.pipelineSwitch(8);
         turret = hardwareMap.get(DcMotor.class,"Turret");
         stopper = hardwareMap.get(Servo.class, "Stopper");
         turret.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        // turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+       // turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+       // turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
-        hood.setPosition(1);
+        hood.setPosition(0.6);
         stopper.setPosition(1);
-        //    limelight3A.start();
+    //    limelight3A.start();
 
        /* turret.setPower(0);
         turret.setTargetPosition(100);
@@ -322,6 +317,8 @@ public class RED_LONG_CORNER extends OpMode {
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.addData("State Timer",stateTimer.seconds());
         telemetry.update();
+
+
     }
 
 }

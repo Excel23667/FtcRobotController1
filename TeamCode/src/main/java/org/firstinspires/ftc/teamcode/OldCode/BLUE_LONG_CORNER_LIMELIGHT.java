@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.OldCode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -8,8 +8,8 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -17,12 +17,11 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-@Autonomous(name = "RED LONG CORNER LIMELIGHT",group = "RED")
-public class RED_LONG_CORNER_LIMELIGHT extends OpMode {
+@Disabled
+@Autonomous(name = "BLUE LONG CORNER LIMELIGHT",group = "BLUE")
+public class BLUE_LONG_CORNER_LIMELIGHT extends OpMode {
     private DcMotor intake;
     private DcMotorEx shooterRight;
     private DcMotorEx shooterLeft;
@@ -72,11 +71,11 @@ public class RED_LONG_CORNER_LIMELIGHT extends OpMode {
     }
     PathState pathState;
 
-    private final Pose startPose = new Pose(81,9.6,Math.toRadians(90));
-    private final Pose shootPose = new Pose(86.57943925233647,18.26168224299067,Math.toRadians(67));
-    private final Pose preBallCollect1 = new Pose(137,22.5,Math.toRadians(-58));
-    private final Pose ballCollect1 = new Pose(137,5.700934579439238,Math.toRadians(-58));
-    private final Pose leavePose = new Pose(118.65420560747667,14.775700934579435,Math.toRadians(90));
+    private final Pose startPose = new Pose(144-81,9.6,Math.toRadians(90));
+    private final Pose shootPose = new Pose(144-86.57943925233647,18.26168224299067,Math.toRadians(180-67));
+    private final Pose preBallCollect1 = new Pose(144-137,22.5,Math.toRadians(180+58));
+    private final Pose ballCollect1 = new Pose(144-137,5.700934579439238,Math.toRadians(180+58));
+    private final Pose leavePose = new Pose(144-118.65420560747667,14.775700934579435,Math.toRadians(90));
 
     private PathChain driveStartPosShootPos, driveShootToPreBallCollect1, drivePreToBallCollect1,driveCollect1ToShoot,driveShootToLeave;
     public void buildPaths(){
@@ -247,8 +246,8 @@ public class RED_LONG_CORNER_LIMELIGHT extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "Intake");
         hood = hardwareMap.get(Servo.class, "Hood");
         turret = hardwareMap.get(DcMotor.class,"Turret");
-         limelight3A = hardwareMap.get(Limelight3A.class, "limelight");
-         limelight3A.pipelineSwitch(8);
+        limelight3A = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight3A.pipelineSwitch(7);
         stopper = hardwareMap.get(Servo.class, "Stopper");
         turret.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);

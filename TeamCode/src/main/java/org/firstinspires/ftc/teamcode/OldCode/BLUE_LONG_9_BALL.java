@@ -1,16 +1,13 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.OldCode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -18,12 +15,10 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Disabled
-@Autonomous(name = "RED_LONG_9_BALL",group = "RED")
-public class RED_LONG_9_BALL extends OpMode {
+@Autonomous(name = "BLUE_LONG_9_BALL",group = "BLUE")
+public class BLUE_LONG_9_BALL extends OpMode {
     private DcMotor intake;
     private DcMotorEx shooterRight;
     private DcMotorEx shooterLeft;
@@ -83,13 +78,13 @@ public class RED_LONG_9_BALL extends OpMode {
     }
     PathState pathState;
 
-    private final Pose startPose = new Pose(81,9.6,Math.toRadians(90));
-    private final Pose shootPose = new Pose(86.57943925233647,18.26168224299067,Math.toRadians(67));
-    private final Pose preBallCollect1 = new Pose(105.25794392523363,35.80934579439253,Math.toRadians(0));
-    private final Pose ballCollect1 = new Pose(136.54485981308412,35.80934579439253,Math.toRadians(0));
-    private final Pose preBallCollect2 = new Pose(105.25794392523363,59.411214953271035,Math.toRadians(0));
-    private final Pose ballCollect2 = new Pose(136.54485981308412,59.411214953271035,Math.toRadians(0));
-    private final Pose leavePose = new Pose(107.90654205607477,75.77570093457945,Math.toRadians(0));
+    private final Pose startPose = new Pose(144-81,9.6,Math.toRadians(90));
+    private final Pose shootPose = new Pose(144-86.57943925233647,18.26168224299067,Math.toRadians(180-67));
+    private final Pose preBallCollect1 = new Pose(144-105.25794392523363,35.80934579439253,Math.toRadians(180));
+    private final Pose ballCollect1 = new Pose(144-136.54485981308412,35.80934579439253,Math.toRadians(180));
+    private final Pose preBallCollect2 = new Pose(144-105.25794392523363,59.411214953271035,Math.toRadians(180));
+    private final Pose ballCollect2 = new Pose(144-136.54485981308412,59.411214953271035,Math.toRadians(180));
+    private final Pose leavePose = new Pose(144-107.90654205607477,75.77570093457945,Math.toRadians(180));
 
     private PathChain driveStartPosShootPos, driveShootToPreBallCollect1, drivePreToBallCollect1,driveCollect1ToShoot,driveShootToPreBallCollect2,drivePreToBallCollect2,driveCollect2ToShoot,driveShootToLeave;
     public void buildPaths(){

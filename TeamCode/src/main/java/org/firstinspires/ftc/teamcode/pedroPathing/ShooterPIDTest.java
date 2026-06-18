@@ -15,8 +15,8 @@ public class ShooterPIDTest extends LinearOpMode {
     public DcMotorEx shooterLeft;
     public DcMotor intake;
    // public CRServo stopper;
-    public double lowVelocity  = 1200;
-    public double highVelocity = 1800;
+    public double lowVelocity  = 1600;
+    public double highVelocity = 2100;
     double curTargetVelocity = highVelocity;
     double F;
     double P;
@@ -31,8 +31,8 @@ public class ShooterPIDTest extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "Intake");
      //   stopper = hardwareMap.get(CRServo.class,"Stopper");
 
-        shooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        shooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooterRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        shooterLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         shooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -42,7 +42,8 @@ public class RED_TELEOP extends LinearOpMode {
     static final double AIM_TOLERANCE = 1.0;
     double lastError = 0;
     double integralSum = 0;
-    PIDFCoefficients shooterPIDF = new PIDFCoefficients(1.5,0,0,14.2);
+    PIDFCoefficients shooterShortPIDF = new PIDFCoefficients(5.5,0,0,14.2);
+    PIDFCoefficients shooterLongPIDF = new PIDFCoefficients(10,0,0,14.2);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -80,9 +81,9 @@ public class RED_TELEOP extends LinearOpMode {
         turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         shooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
+        //shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
+       // shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
 
         shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -177,8 +178,7 @@ public class RED_TELEOP extends LinearOpMode {
                     }
                     turret.setPower(0);
                     turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                } else if (turret.getCurrentPosition() >
-                        TURRET_RIGHT_NEGATIVE && turret.getCurrentPosition() < TURRET_LEFT_POSITIVE) {
+                } else if (turret.getCurrentPosition() > TURRET_RIGHT_NEGATIVE && turret.getCurrentPosition() < TURRET_LEFT_POSITIVE) {
                     if(llResult.getTx() <0.5 && llResult.getTx()>-0.5){
                         turret.setPower(0);
                     }else {
@@ -188,6 +188,10 @@ public class RED_TELEOP extends LinearOpMode {
                     turret.setPower(0);
                 }
 
+            }else {
+                integralSum = 0;
+                lastError=0;
+                turret.setPower(0);
             }
 
             /*else {
@@ -271,18 +275,24 @@ public class RED_TELEOP extends LinearOpMode {
                 shooterLeft.setVelocity(0);
             }
             if (gamepad1.y){
+                shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterLongPIDF);
+                shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterLongPIDF);
                 shooterRight.setVelocity(2100);
                 shooterLeft.setVelocity(2100);
                 hood.setPosition(0.9);
                 stopper.setPosition(0.05);
             }
             if (gamepad1.b){
+                shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterShortPIDF);
+                shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterShortPIDF);
                 shooterRight.setVelocity(1600);
                 shooterLeft.setVelocity(1600);
                 hood.setPosition(0.6);
                 stopper.setPosition(0.05);
             }
             if (gamepad1.right_bumper){
+                shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterShortPIDF);
+                shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterShortPIDF);
                 shooterRight.setVelocity(1600);
                 shooterLeft.setVelocity(1600);
                 hood.setPosition(0.6);
