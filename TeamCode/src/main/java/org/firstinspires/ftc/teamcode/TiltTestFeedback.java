@@ -22,11 +22,9 @@ public class TiltTestFeedback extends LinearOpMode {
             if (gamepad1.a) {
                 Tilt.setPosition(0.0);
             }
-
             if (gamepad1.b) {
-                Tilt.setPosition(0.15);
+                Tilt.setPosition(0.1575);
             }
-
             if (gamepad1.y) {
                 Tilt.setPosition(0.2);
             }

@@ -87,16 +87,16 @@ public class BLUE_SHORT_9_BALL_GATE extends OpMode {
     }
     PathState pathState;
 
-    private final Pose startPose = new Pose(144-122.84112149532712,122.39252336448601,Math.toRadians(90-37));
-    private final Pose shootPose = new Pose(144-85.68224299065416,94.93457943925233,Math.toRadians(90-36));
-    private final Pose preBallCollect1 = new Pose(144-94.36448598130843,82.6,Math.toRadians(90));
-    private final Pose ballCollect1 = new Pose(144-126.9,82.6,Math.toRadians(90));
-    private final Pose preGate = new Pose(144-113.94579439252337,74.5,Math.toRadians(90));
-    private final Pose gate = new Pose(144-126,74.5,Math.toRadians(90));
-    private final Pose preBallCollect2 = new Pose(144-94.36448598130843,59,Math.toRadians(90));
-    private final Pose ballCollect2 = new Pose(144-136.54485981308412,59,Math.toRadians(90));
-    private final Pose preShootFromCollect = new Pose(144-113.94579439252337,58.5,Math.toRadians(90));
-    private final Pose leavePose = new Pose(144-107.90654205607477,75.77570093457945,Math.toRadians(90));
+    private final Pose startPose = new Pose(144-122.84112149532712,122.39252336448601,Math.toRadians(180-37));
+    private final Pose shootPose = new Pose(144-85.68224299065416,94.93457943925233,Math.toRadians(180-36));
+    private final Pose preBallCollect1 = new Pose(144-94.36448598130843,82.6,Math.toRadians(180));
+    private final Pose ballCollect1 = new Pose(144-126.9,82.6,Math.toRadians(180));
+    private final Pose preGate = new Pose(144-113.94579439252337,74.5,Math.toRadians(180));
+    private final Pose gate = new Pose(144-126,74.5,Math.toRadians(180));
+    private final Pose preBallCollect2 = new Pose(144-94.36448598130843,59,Math.toRadians(180));
+    private final Pose ballCollect2 = new Pose(144-136.54485981308412,59,Math.toRadians(180));
+    private final Pose preShootFromCollect = new Pose(144-113.94579439252337,58.5,Math.toRadians(180));
+    private final Pose leavePose = new Pose(144-107.90654205607477,75.77570093457945,Math.toRadians(180));
 
     private PathChain driveStartPosShootPos, driveShootToPreBallCollect1, drivePreToBallCollect1,driveShootToPreBallCollect2,drivePreToBallCollect2,drivePreShootToShoot,driveShootToLeave,driveCollect1toPreGate,drivePreGateToGate,driveGateToShoot,driveCollect2toPreGate,driveGateToShoot2,drivePreGateToGate2;
     public void buildPaths(){

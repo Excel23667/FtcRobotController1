@@ -21,8 +21,8 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "BLUE_SHORT_9_BALL",group = "BLUE")
-public class BLUE_SHORT_9_BALL extends OpMode {
+@Autonomous(name = "BLUE_LONG_CORNER_AUTO",group = "BLUE")
+public class NEW_BLUE_LONG_AUTO extends OpMode {
     private DcMotor intake;
     private DcMotorEx shooterRight;
     private DcMotorEx shooterLeft;
@@ -66,11 +66,11 @@ public class BLUE_SHORT_9_BALL extends OpMode {
         SHOOTING_BALL1_2,
         WARMUP_BALL1_3,
         SHOOTING_BALL1_3,
-        DRIVE_SHOOT_TO_PRE_COLLECT2,
-        DRIVE_COLLECT2,
-        DRIVE_COLLECT2_TO_PRE_SHOOT,
-        DRIVE_PRE_SHOOT_TO_SHOOT,
-        REVERSE_BALL_2,
+        DRIVE_SHOOT_TO_PRE_CORNER1,
+        DRIVE_CORNER1,
+        DRIVE_RAM_PRE,
+        DRIVE_RAM_CORNER_BALL,
+        DRIVE_CORNER1_TO_SHOOT,
         SHOOTER_WARMUP_2BALLS,
         SHOOTING_BALL2_1,
         WARMUP_BALL2_2,
@@ -79,24 +79,23 @@ public class BLUE_SHORT_9_BALL extends OpMode {
         SHOOTING_BALL2_3,
         DRIVE_SHOOT_TO_LEAVE,
         RESET_TURRET
-
     }
     PathState pathState;
 
-    private final Pose startPose = new Pose(144-122.24299065420558,121.21495327102804,Math.toRadians(180-37));
-    private final Pose shootPose = new Pose(144-85.68224299065416,94.93457943925233,Math.toRadians(180-36));
-    private final Pose preBallCollect1 = new Pose(144-94.36448598130843,82.6,Math.toRadians(180));
-    private final Pose ballCollect1 = new Pose(144-126.9,82.6,Math.toRadians(180));
-    private final Pose preBallCollect2 = new Pose(144-94.36448598130843,58.5,Math.toRadians(180));
-    private final Pose ballCollect2 = new Pose(144-136.54485981308412,58.5,Math.toRadians(180));
-    private final Pose preShootFromCollect = new Pose(144-113.94579439252337,58.5,Math.toRadians(180));
-    private final Pose leavePose = new Pose(144-107.90654205607477,75.77570093457945,Math.toRadians(180));
+    private final Pose startPose = new Pose(144-81,8.841121495327119,Math.toRadians(180-90));
+    private final Pose shootPose = new Pose(144-86.57943925233647,18.26168224299067,Math.toRadians(180-66));
+    private final Pose preBallCollect1 = new Pose(144-96.08878504672899,34.85981308411216,Math.toRadians(180));
+    private final Pose ballCollect1 = new Pose(144-136.54485981308412,34.85981308411216,Math.toRadians(180));
+    private final Pose preRam = new Pose(144-125,10.67,Math.toRadians(180));
+    private final Pose preBallCorner = new Pose(144-114.12149532710282,10.67,Math.toRadians(180));
+    private final Pose ballCorner = new Pose(144-140,10.67,Math.toRadians(180));
+    private final Pose leavePose = new Pose(144-119.10280373831779,18.26168224299067,Math.toRadians(180));
 
-    private PathChain driveStartPosShootPos, driveShootToPreBallCollect1, drivePreToBallCollect1,driveCollect1ToShoot,driveShootToPreBallCollect2,drivePreToBallCollect2,driveCollect2ToPreShoot,drivePreShootToShoot,driveShootToLeave;
+    private PathChain driveStartPosShootPos, driveShootToPreBallCollect1, drivePreToBallCollect1,driveCollect1ToShoot,driveShootToPreBallCorner1,drivePreToBallCorner1,driveCorner1ToShoot,driveShootToLeave,driveCornerCollectToPreRam,drivePreRamToRam;
     public void buildPaths(){
         driveStartPosShootPos = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, shootPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(),shootPose.getHeading(),0.8)
+                .setLinearHeadingInterpolation(startPose.getHeading(),Math.toRadians(180-68),0.8)
                 .build();
         driveShootToPreBallCollect1 = follower.pathBuilder()
                 .addPath(new BezierLine(shootPose,preBallCollect1))
@@ -110,21 +109,25 @@ public class BLUE_SHORT_9_BALL extends OpMode {
                 .addPath(new BezierLine(ballCollect1,shootPose))
                 .setLinearHeadingInterpolation(ballCollect1.getHeading(), shootPose.getHeading(),0.8)
                 .build();
-        driveShootToPreBallCollect2 = follower.pathBuilder()
-                .addPath(new BezierLine(shootPose,preBallCollect2))
-                .setLinearHeadingInterpolation(shootPose.getHeading(),preBallCollect2.getHeading())
+        driveShootToPreBallCorner1 = follower.pathBuilder()
+                .addPath(new BezierLine(shootPose,preBallCorner))
+                .setLinearHeadingInterpolation(shootPose.getHeading(),preBallCorner.getHeading())
                 .build();
-        drivePreToBallCollect2 = follower.pathBuilder()
-                .addPath(new BezierLine(preBallCollect2,ballCollect2))
-                .setLinearHeadingInterpolation(preBallCollect2.getHeading(),ballCollect2.getHeading())
+        drivePreToBallCorner1 = follower.pathBuilder()
+                .addPath(new BezierLine(preBallCorner,ballCorner))
+                .setLinearHeadingInterpolation(preBallCorner.getHeading(),ballCorner.getHeading())
                 .build();
-        driveCollect2ToPreShoot = follower.pathBuilder()
-                .addPath(new BezierLine(ballCollect2,preShootFromCollect))
-                .setLinearHeadingInterpolation(ballCollect2.getHeading(),preShootFromCollect.getHeading())
+        driveCornerCollectToPreRam = follower.pathBuilder()
+                .addPath(new BezierLine(ballCorner,preRam))
+                .setLinearHeadingInterpolation(ballCorner.getHeading(),preRam.getHeading())
                 .build();
-        drivePreShootToShoot = follower.pathBuilder()
-                .addPath(new BezierLine(preShootFromCollect,shootPose))
-                .setLinearHeadingInterpolation(preShootFromCollect.getHeading(), shootPose.getHeading(),1.0)
+        drivePreRamToRam = follower.pathBuilder()
+                .addPath(new BezierLine(preRam,ballCorner))
+                .setLinearHeadingInterpolation(preRam.getHeading(),ballCorner.getHeading())
+                .build();
+        driveCorner1ToShoot = follower.pathBuilder()
+                .addPath(new BezierLine(ballCorner,shootPose))
+                .setLinearHeadingInterpolation(ballCorner.getHeading(), shootPose.getHeading(),1.0)
                 .build();
         driveShootToLeave = follower.pathBuilder()
                 .addPath(new BezierLine(shootPose,leavePose))
@@ -140,17 +143,17 @@ public class BLUE_SHORT_9_BALL extends OpMode {
                 break;
             case SHOOTER_WARMUP_PRE:
                 //is follower done its path
-                hood.setPosition(0.6);
-                shooterRight.setVelocity(1600);
-                shooterLeft.setVelocity(1600);
+                hood.setPosition(0.9);
+                shooterRight.setVelocity(2150);
+                shooterLeft.setVelocity(2150);
                 stopper.setPosition(0.05);
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3.5){
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 4){
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_PRE1);
                 }
                 break;
             case SHOOTING_PRE1:
-                if (pathTimer.getElapsedTimeSeconds()>0.2){
+                if (pathTimer.getElapsedTimeSeconds()>0.1){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_PRE2);
                 }
@@ -162,7 +165,7 @@ public class BLUE_SHORT_9_BALL extends OpMode {
                 }
                 break;
             case SHOOTING_PRE2:
-                if (pathTimer.getElapsedTimeSeconds()>0.3){
+                if (pathTimer.getElapsedTimeSeconds()>0.1){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_PRE3);
                 }
@@ -179,7 +182,7 @@ public class BLUE_SHORT_9_BALL extends OpMode {
                 }
                 break;
             case DRIVE_SHOOT_TO_PRE_COLLECT1:
-                stopper.setPosition(0.17);
+                stopper.setPosition(0.15);
                 follower.followPath(driveShootToPreBallCollect1,true);
                 setPathState(PathState.DRIVE_COLLECT1);
                 break;
@@ -191,7 +194,7 @@ public class BLUE_SHORT_9_BALL extends OpMode {
                 }
                 break;
             case DRIVE_COLLECT1_TO_SHOOT:
-                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 2.6){
+                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 2){
                     follower.setMaxPower(1);
                     intake.setPower(0);
                     follower.followPath(driveCollect1ToShoot,true);
@@ -206,7 +209,7 @@ public class BLUE_SHORT_9_BALL extends OpMode {
                 break;
             case SHOOTER_WARMUP_1BALLS:
                 //is follower done its path
-                if (pathTimer.getElapsedTimeSeconds()>0.4) {
+                if (pathTimer.getElapsedTimeSeconds()>0.9) {
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_BALL1_1);
                 }
@@ -224,7 +227,7 @@ public class BLUE_SHORT_9_BALL extends OpMode {
                 }
                 break;
             case SHOOTING_BALL1_2:
-                if (pathTimer.getElapsedTimeSeconds()>0.3){
+                if (pathTimer.getElapsedTimeSeconds()>0.15){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_BALL1_3);
                 }
@@ -237,44 +240,50 @@ public class BLUE_SHORT_9_BALL extends OpMode {
                 break;
             case SHOOTING_BALL1_3:
                 if (pathTimer.getElapsedTimeSeconds()>1){
-                    setPathState(PathState.DRIVE_SHOOT_TO_PRE_COLLECT2);
+                    setPathState(PathState.DRIVE_SHOOT_TO_PRE_CORNER1);
                 }
                 break;
-            case DRIVE_SHOOT_TO_PRE_COLLECT2:
-                stopper.setPosition(0.17);
-                follower.followPath(driveShootToPreBallCollect2,true);
-                setPathState(PathState.DRIVE_COLLECT2);
+            case DRIVE_SHOOT_TO_PRE_CORNER1:
+                stopper.setPosition(0.15);
+                follower.followPath(driveShootToPreBallCorner1,true);
+                setPathState(PathState.DRIVE_CORNER1);
                 break;
-            case DRIVE_COLLECT2:
+            case DRIVE_CORNER1:
                 if (!follower.isBusy()){
-                    follower.setMaxPower(0.65);
-                    follower.followPath(drivePreToBallCollect2,true);
-                    setPathState(PathState.DRIVE_COLLECT2_TO_PRE_SHOOT);
+                    follower.setMaxPower(0.75);
+                    follower.followPath(drivePreToBallCorner1,true);
+                    setPathState(PathState.DRIVE_RAM_PRE);
                 }
                 break;
-            case DRIVE_COLLECT2_TO_PRE_SHOOT:
-                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 2.4){
+            case DRIVE_RAM_PRE:
+                stopper.setPosition(0.15);
+                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() >2){
+                    follower.followPath(driveCornerCollectToPreRam,true);
+                    setPathState(PathState.DRIVE_RAM_CORNER_BALL);
+                }
+                break;
+            case DRIVE_RAM_CORNER_BALL:
+                stopper.setPosition(0.15);
+                if (!follower.isBusy()){
+                    follower.followPath(drivePreRamToRam,true);
+                    setPathState(PathState.DRIVE_CORNER1_TO_SHOOT);
+                }
+                break;
+            case DRIVE_CORNER1_TO_SHOOT:
+                stopper.setPosition(0.15);
+                if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() >3.5){
+                    stopper.setPosition(0.15);
                     follower.setMaxPower(1);
                     intake.setPower(0);
-                    follower.followPath(driveCollect2ToPreShoot,true);
-                    setPathState(PathState.DRIVE_PRE_SHOOT_TO_SHOOT);
-                }
-                break;
-            case DRIVE_PRE_SHOOT_TO_SHOOT:
-                if (!follower.isBusy()){
-                    follower.followPath(drivePreShootToShoot);
-                    setPathState(PathState.REVERSE_BALL_2);
-                }
-                break;
-            case REVERSE_BALL_2:
-                if (!follower.isBusy()){
-                    stopper.setPosition(0.05);
+                    follower.followPath(driveCorner1ToShoot,true);
                     setPathState(PathState.SHOOTER_WARMUP_2BALLS);
                 }
                 break;
             case SHOOTER_WARMUP_2BALLS:
+                stopper.setPosition(0.15);
                 //is follower done its path
-                if (pathTimer.getElapsedTimeSeconds()>0.4) {
+                if (pathTimer.getElapsedTimeSeconds()>2) {
+                    stopper.setPosition(0.05);
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_BALL2_1);
                 }
@@ -292,7 +301,7 @@ public class BLUE_SHORT_9_BALL extends OpMode {
                 }
                 break;
             case SHOOTING_BALL2_2:
-                if (pathTimer.getElapsedTimeSeconds()>0.3){
+                if (pathTimer.getElapsedTimeSeconds()>0.15){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_BALL2_3);
                 }
@@ -360,8 +369,8 @@ public class BLUE_SHORT_9_BALL extends OpMode {
         shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
-        hood.setPosition(0.6);
-        stopper.setPosition(0.17);
+        hood.setPosition(0.9);
+        stopper.setPosition(0.15);
         //    limelight3A.start();
 
        /* turret.setPower(0);

@@ -42,8 +42,9 @@ public class RED_TELEOP extends LinearOpMode {
     static final double AIM_TOLERANCE = 1.0;
     double lastError = 0;
     double integralSum = 0;
+    private Servo Tilt;
     PIDFCoefficients shooterShortPIDF = new PIDFCoefficients(5.5,0,0,14.2);
-    PIDFCoefficients shooterLongPIDF = new PIDFCoefficients(10,0,0,14.2);
+    PIDFCoefficients shooterLongPIDF = new PIDFCoefficients(25,0,0,14.2);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -88,8 +89,11 @@ public class RED_TELEOP extends LinearOpMode {
         shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        Tilt = hardwareMap.get(Servo.class, "tilt");
+        Tilt.setDirection(Servo.Direction.REVERSE);
+
         hood.setPosition(0.5);
-        stopper.setPosition(0.17);
+        stopper.setPosition(0.15);
 
         limelight3A.start();
 
@@ -262,15 +266,15 @@ public class RED_TELEOP extends LinearOpMode {
             if (gamepad1.x) {
               //  shooterRight.setVelocity(0);
               //  shooterLeft.setVelocity(0);
-                stopper.setPosition(0.17);
+                stopper.setPosition(0.15);
             }
             if (gamepad2.x) {
                 shooterRight.setVelocity(0);
                 shooterLeft.setVelocity(0);
-                stopper.setPosition(0.17);
+                stopper.setPosition(0.15);
             }
             if (gamepad1.a){
-                stopper.setPosition(0.17);
+                stopper.setPosition(0.15);
                 shooterRight.setVelocity(0);
                 shooterLeft.setVelocity(0);
             }
@@ -279,22 +283,22 @@ public class RED_TELEOP extends LinearOpMode {
                 shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterLongPIDF);
                 shooterRight.setVelocity(2100);
                 shooterLeft.setVelocity(2100);
-                hood.setPosition(0.9);
+                hood.setPosition(0.8);
                 stopper.setPosition(0.05);
             }
             if (gamepad1.b){
                 shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterShortPIDF);
                 shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterShortPIDF);
-                shooterRight.setVelocity(1600);
-                shooterLeft.setVelocity(1600);
+                shooterRight.setVelocity(1550);
+                shooterLeft.setVelocity(1550);
                 hood.setPosition(0.6);
                 stopper.setPosition(0.05);
             }
             if (gamepad1.right_bumper){
                 shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterShortPIDF);
                 shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterShortPIDF);
-                shooterRight.setVelocity(1600);
-                shooterLeft.setVelocity(1600);
+                shooterRight.setVelocity(1550);
+                shooterLeft.setVelocity(1550);
                 hood.setPosition(0.6);
                 stopper.setPosition(0.05);
             }
@@ -343,6 +347,9 @@ public class RED_TELEOP extends LinearOpMode {
                 }
                 turret.setPower(0);
                 turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+            if (gamepad1.right_trigger == 1 && gamepad1.left_trigger == 1){
+                Tilt.setPosition(0.1575);
             }
         }
     }

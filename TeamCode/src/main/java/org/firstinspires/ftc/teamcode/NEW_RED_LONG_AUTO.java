@@ -83,19 +83,19 @@ public class NEW_RED_LONG_AUTO extends OpMode {
     PathState pathState;
 
     private final Pose startPose = new Pose(81,8.841121495327119,Math.toRadians(90));
-    private final Pose shootPose = new Pose(86.57943925233647,18.26168224299067,Math.toRadians(65));
+    private final Pose shootPose = new Pose(86.57943925233647,18.26168224299067,Math.toRadians(66));
     private final Pose preBallCollect1 = new Pose(96.08878504672899,34.85981308411216,Math.toRadians(0));
     private final Pose ballCollect1 = new Pose(136.54485981308412,34.85981308411216,Math.toRadians(0));
-    private final Pose preRam = new Pose(110,10.5,Math.toRadians(0));
-    private final Pose preBallCorner = new Pose(114.12149532710282,10.5,Math.toRadians(0));
-    private final Pose ballCorner = new Pose(140,10.5,Math.toRadians(0));
+    private final Pose preRam = new Pose(125,10.67,Math.toRadians(0));
+    private final Pose preBallCorner = new Pose(114.12149532710282,10.67,Math.toRadians(0));
+    private final Pose ballCorner = new Pose(140,10.67,Math.toRadians(0));
     private final Pose leavePose = new Pose(119.10280373831779,18.26168224299067,Math.toRadians(0));
 
     private PathChain driveStartPosShootPos, driveShootToPreBallCollect1, drivePreToBallCollect1,driveCollect1ToShoot,driveShootToPreBallCorner1,drivePreToBallCorner1,driveCorner1ToShoot,driveShootToLeave,driveCornerCollectToPreRam,drivePreRamToRam;
     public void buildPaths(){
         driveStartPosShootPos = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, shootPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(),shootPose.getHeading(),0.8)
+                .setLinearHeadingInterpolation(startPose.getHeading(),Math.toRadians(68),0.8)
                 .build();
         driveShootToPreBallCollect1 = follower.pathBuilder()
                 .addPath(new BezierLine(shootPose,preBallCollect1))
@@ -153,7 +153,7 @@ public class NEW_RED_LONG_AUTO extends OpMode {
                 }
                 break;
             case SHOOTING_PRE1:
-                if (pathTimer.getElapsedTimeSeconds()>0.2){
+                if (pathTimer.getElapsedTimeSeconds()>0.1){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_PRE2);
                 }
@@ -165,7 +165,7 @@ public class NEW_RED_LONG_AUTO extends OpMode {
                 }
                 break;
             case SHOOTING_PRE2:
-                if (pathTimer.getElapsedTimeSeconds()>0.2){
+                if (pathTimer.getElapsedTimeSeconds()>0.1){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_PRE3);
                 }
@@ -182,7 +182,7 @@ public class NEW_RED_LONG_AUTO extends OpMode {
                 }
                 break;
             case DRIVE_SHOOT_TO_PRE_COLLECT1:
-                stopper.setPosition(0.17);
+                stopper.setPosition(0.15);
                 follower.followPath(driveShootToPreBallCollect1,true);
                 setPathState(PathState.DRIVE_COLLECT1);
                 break;
@@ -227,7 +227,7 @@ public class NEW_RED_LONG_AUTO extends OpMode {
                 }
                 break;
             case SHOOTING_BALL1_2:
-                if (pathTimer.getElapsedTimeSeconds()>0.3){
+                if (pathTimer.getElapsedTimeSeconds()>0.15){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_BALL1_3);
                 }
@@ -244,31 +244,35 @@ public class NEW_RED_LONG_AUTO extends OpMode {
                 }
                 break;
             case DRIVE_SHOOT_TO_PRE_CORNER1:
-                stopper.setPosition(0.17);
+                stopper.setPosition(0.15);
                 follower.followPath(driveShootToPreBallCorner1,true);
                 setPathState(PathState.DRIVE_CORNER1);
                 break;
             case DRIVE_CORNER1:
                 if (!follower.isBusy()){
-                    follower.setMaxPower(0.65);
+                    follower.setMaxPower(0.75);
                     follower.followPath(drivePreToBallCorner1,true);
                     setPathState(PathState.DRIVE_RAM_PRE);
                 }
                 break;
             case DRIVE_RAM_PRE:
+                stopper.setPosition(0.15);
                 if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() >2){
                     follower.followPath(driveCornerCollectToPreRam,true);
                     setPathState(PathState.DRIVE_RAM_CORNER_BALL);
                 }
                 break;
             case DRIVE_RAM_CORNER_BALL:
+                stopper.setPosition(0.15);
                 if (!follower.isBusy()){
                     follower.followPath(drivePreRamToRam,true);
                     setPathState(PathState.DRIVE_CORNER1_TO_SHOOT);
                 }
                 break;
             case DRIVE_CORNER1_TO_SHOOT:
+                stopper.setPosition(0.15);
                 if (!follower.isBusy() || pathTimer.getElapsedTimeSeconds() >3.5){
+                    stopper.setPosition(0.15);
                     follower.setMaxPower(1);
                     intake.setPower(0);
                     follower.followPath(driveCorner1ToShoot,true);
@@ -276,8 +280,9 @@ public class NEW_RED_LONG_AUTO extends OpMode {
                 }
                 break;
             case SHOOTER_WARMUP_2BALLS:
+                stopper.setPosition(0.15);
                 //is follower done its path
-                if (pathTimer.getElapsedTimeSeconds()>0.5) {
+                if (pathTimer.getElapsedTimeSeconds()>2) {
                     stopper.setPosition(0.05);
                     intake.setPower(1);
                     setPathState(PathState.SHOOTING_BALL2_1);
@@ -296,7 +301,7 @@ public class NEW_RED_LONG_AUTO extends OpMode {
                 }
                 break;
             case SHOOTING_BALL2_2:
-                if (pathTimer.getElapsedTimeSeconds()>0.3){
+                if (pathTimer.getElapsedTimeSeconds()>0.15){
                     intake.setPower(0);
                     setPathState(PathState.WARMUP_BALL2_3);
                 }
@@ -365,7 +370,7 @@ public class NEW_RED_LONG_AUTO extends OpMode {
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
         hood.setPosition(0.9);
-        stopper.setPosition(0.17);
+        stopper.setPosition(0.15);
         //    limelight3A.start();
 
        /* turret.setPower(0);

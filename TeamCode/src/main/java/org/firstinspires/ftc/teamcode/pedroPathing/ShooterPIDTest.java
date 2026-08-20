@@ -15,7 +15,7 @@ public class ShooterPIDTest extends LinearOpMode {
     public DcMotorEx shooterLeft;
     public DcMotor intake;
    // public CRServo stopper;
-    public double lowVelocity  = 1600;
+    public double lowVelocity  = 1550;
     public double highVelocity = 2100;
     double curTargetVelocity = highVelocity;
     double F;

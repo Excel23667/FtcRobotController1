@@ -34,15 +34,17 @@ public class BLUE_TELEOP extends LinearOpMode {
     double offset;
     int  cticks;
     private Limelight3A limelight3A;
-    static final double kP =0.008;
-    static final double kI =0.000001;
-    static final double kD =0.0021;
-    static final double TURRET_RIGHT_NEGATIVE= -160;
-    static final double TURRET_LEFT_POSITIVE = 160;
+    static final double kP =0.014;
+    static final double kI =0;
+    static final double kD =0.03;
+    static final double TURRET_RIGHT_NEGATIVE= -85;
+    static final double TURRET_LEFT_POSITIVE = 600;
     static final double AIM_TOLERANCE = 1.0;
     double lastError = 0;
     double integralSum = 0;
-    PIDFCoefficients shooterPIDF = new PIDFCoefficients(1.5,0,0,14.2);
+    private Servo Tilt;
+    PIDFCoefficients shooterShortPIDF = new PIDFCoefficients(5.5,0,0,14.2);
+    PIDFCoefficients shooterLongPIDF = new PIDFCoefficients(25,0,0,14.2);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -62,8 +64,8 @@ public class BLUE_TELEOP extends LinearOpMode {
         BackLeft.setDirection(DcMotor.Direction.FORWARD);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        shooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        shooterLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooterRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        shooterLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
         FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -80,15 +82,18 @@ public class BLUE_TELEOP extends LinearOpMode {
         turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         shooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
+        //shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
+        // shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterPIDF);
 
         shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        hood.setPosition(0.6);
-        stopper.setPosition(0.50);
+        Tilt = hardwareMap.get(Servo.class, "tilt");
+        Tilt.setDirection(Servo.Direction.REVERSE);
+
+        hood.setPosition(0.5);
+        stopper.setPosition(0.15);
 
         limelight3A.start();
 
@@ -105,9 +110,9 @@ public class BLUE_TELEOP extends LinearOpMode {
                 x = gamepad1.right_stick_x * 1.1 * -0.75 * 0.5;
                 rx = -gamepad1.left_stick_x * 0.6 * -0.9 * 0.7;
             } else {
-                y = -gamepad1.right_stick_y * 1 * 0.75;
-                x = gamepad1.right_stick_x * 1.1 * -0.75;
-                rx = -gamepad1.left_stick_x * 0.6 * -0.9;
+                y = -gamepad1.right_stick_y * 1 * 1;
+                x = gamepad1.right_stick_x * 1.1 * -1;
+                rx = -gamepad1.left_stick_x * -0.6;
             }
             denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
             BackLeft.setPower((y + x + rx) / denominator);
@@ -143,13 +148,13 @@ public class BLUE_TELEOP extends LinearOpMode {
 
                 if (turret.getCurrentPosition() >= TURRET_LEFT_POSITIVE){
                     turret.setPower(0);
-                    turret.setTargetPosition(0);
+                    turret.setTargetPosition((int) (TURRET_LEFT_POSITIVE-10));
                     turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     turret.setPower(-0.7);
                     while (turret.isBusy()){
-                        y = -gamepad1.right_stick_y * 1 * 0.75;
-                        x = gamepad1.right_stick_x * 1.1 * -0.75;
-                        rx = -gamepad1.left_stick_x * 0.6 * -0.9;
+                        y = -gamepad1.right_stick_y * 1 * 1;
+                        x = gamepad1.right_stick_x * 1.1 * -1;
+                        rx = -gamepad1.left_stick_x * 0.6 * -1;
                         denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
                         BackLeft.setPower((y + x + rx) / denominator);
                         FrontLeft.setPower(((y - x) + rx) / denominator);
@@ -161,13 +166,13 @@ public class BLUE_TELEOP extends LinearOpMode {
                     turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 } else if (turret.getCurrentPosition() <= TURRET_RIGHT_NEGATIVE) {
                     turret.setPower(0);
-                    turret.setTargetPosition(0);
+                    turret.setTargetPosition((int) (TURRET_RIGHT_NEGATIVE+10));
                     turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     turret.setPower(0.7);
                     while (turret.isBusy()){
-                        y = -gamepad1.right_stick_y * 1 * 0.75;
-                        x = gamepad1.right_stick_x * 1.1 * -0.75;
-                        rx = -gamepad1.left_stick_x * 0.6 * -0.9;
+                        y = -gamepad1.right_stick_y * 1 * 1;
+                        x = gamepad1.right_stick_x * 1.1 * -1;
+                        rx = -gamepad1.left_stick_x * 0.6 * -1;
                         denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
                         BackLeft.setPower((y + x + rx) / denominator);
                         FrontLeft.setPower(((y - x) + rx) / denominator);
@@ -187,16 +192,48 @@ public class BLUE_TELEOP extends LinearOpMode {
                     turret.setPower(0);
                 }
 
+            }else {
+                integralSum = 0;
+                lastError=0;
+                turret.setPower(0);
             }
-            if (turret.getCurrentPosition() >= TURRET_LEFT_POSITIVE){
+
+            /*else {
                 turret.setPower(0);
                 turret.setTargetPosition(0);
                 turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (turret.getCurrentPosition()<0){
+                    turret.setPower(-0.5);
+                }else {
+                    turret.setPower(0.5);
+                }
+                while (turret.isBusy()){
+                    y = -gamepad1.right_stick_y * 1 * 1;
+                    x = gamepad1.right_stick_x * 1.1 * -1;
+                    rx = -gamepad1.left_stick_x * 0.6 * -1;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
+                    intake.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
+                }
+                turret.setPower(0);
+                turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }*/
+
+            //else {
+            //turret.setPower(0);
+            //  }
+            if (turret.getCurrentPosition() >= TURRET_LEFT_POSITIVE){
+                turret.setPower(0);
+                turret.setTargetPosition((int) (TURRET_LEFT_POSITIVE-10));
+                turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 turret.setPower(-0.7);
                 while (turret.isBusy()){
-                    y = -gamepad1.right_stick_y * 1 * 0.75;
-                    x = gamepad1.right_stick_x * 1.1 * -0.75;
-                    rx = -gamepad1.left_stick_x * 0.6 * -0.9;
+                    y = -gamepad1.right_stick_y * 1 * 1;
+                    x = gamepad1.right_stick_x * 1.1 * -1;
+                    rx = -gamepad1.left_stick_x * 0.6 * -1;
                     denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
                     BackLeft.setPower((y + x + rx) / denominator);
                     FrontLeft.setPower(((y - x) + rx) / denominator);
@@ -208,13 +245,13 @@ public class BLUE_TELEOP extends LinearOpMode {
                 turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             } else if (turret.getCurrentPosition() <= TURRET_RIGHT_NEGATIVE) {
                 turret.setPower(0);
-                turret.setTargetPosition(0);
+                turret.setTargetPosition((int) (TURRET_RIGHT_NEGATIVE+10));
                 turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 turret.setPower(0.7);
                 while (turret.isBusy()){
-                    y = -gamepad1.right_stick_y * 1 * 0.75;
-                    x = gamepad1.right_stick_x * 1.1 * -0.75;
-                    rx = -gamepad1.left_stick_x * 0.6 * -0.9;
+                    y = -gamepad1.right_stick_y * 1 * 1;
+                    x = gamepad1.right_stick_x * 1.1 * -1;
+                    rx = -gamepad1.left_stick_x * 0.6 * -1;
                     denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
                     BackLeft.setPower((y + x + rx) / denominator);
                     FrontLeft.setPower(((y - x) + rx) / denominator);
@@ -229,29 +266,90 @@ public class BLUE_TELEOP extends LinearOpMode {
             if (gamepad1.x) {
                 //  shooterRight.setVelocity(0);
                 //  shooterLeft.setVelocity(0);
-                stopper.setPosition(0.5);
+                stopper.setPosition(0.15);
             }
             if (gamepad2.x) {
                 shooterRight.setVelocity(0);
                 shooterLeft.setVelocity(0);
-                stopper.setPosition(0.5);
+                stopper.setPosition(0.15);
             }
             if (gamepad1.a){
+                stopper.setPosition(0.15);
                 shooterRight.setVelocity(0);
                 shooterLeft.setVelocity(0);
-                stopper.setPosition(0.5);
             }
             if (gamepad1.y){
-                shooterRight.setVelocity(1800);
-                shooterLeft.setVelocity(1800);
-                hood.setPosition(0.5);
-                stopper.setPosition(1);
+                shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterLongPIDF);
+                shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterLongPIDF);
+                shooterRight.setVelocity(2100);
+                shooterLeft.setVelocity(2100);
+                hood.setPosition(0.8);
+                stopper.setPosition(0.05);
             }
             if (gamepad1.b){
-                shooterRight.setVelocity(1600);
-                shooterLeft.setVelocity(1600);
-                hood.setPosition(0.5);
-                stopper.setPosition(1);
+                shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterShortPIDF);
+                shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterShortPIDF);
+                shooterRight.setVelocity(1550);
+                shooterLeft.setVelocity(1550);
+                hood.setPosition(0.6);
+                stopper.setPosition(0.05);
+            }
+            if (gamepad1.right_bumper){
+                shooterLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterShortPIDF);
+                shooterRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,shooterShortPIDF);
+                shooterRight.setVelocity(1550);
+                shooterLeft.setVelocity(1550);
+                hood.setPosition(0.6);
+                stopper.setPosition(0.05);
+            }
+            if(gamepad1.left_stick_button){
+                turret.setPower(0);
+                turret.setTargetPosition(350);
+                turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (turret.getCurrentPosition()<0){
+                    turret.setPower(-0.5);
+                }else {
+                    turret.setPower(0.5);
+                }
+                while (turret.isBusy()){
+                    y = -gamepad1.right_stick_y * 1 * 1;
+                    x = gamepad1.right_stick_x * 1.1 * -1;
+                    rx = -gamepad1.left_stick_x * 0.6 * -1;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
+                    intake.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
+                }
+                turret.setPower(0);
+                turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+            if (gamepad1.right_stick_button){
+                turret.setPower(0);
+                turret.setTargetPosition(0);
+                turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (turret.getCurrentPosition()<0){
+                    turret.setPower(-0.5);
+                }else {
+                    turret.setPower(0.5);
+                }
+                while (turret.isBusy()){
+                    y = -gamepad1.right_stick_y * 1 * 1;
+                    x = gamepad1.right_stick_x * 1.1 * -1;
+                    rx = -gamepad1.left_stick_x * 0.6 * -1;
+                    denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
+                    BackLeft.setPower((y + x + rx) / denominator);
+                    FrontLeft.setPower(((y - x) + rx) / denominator);
+                    BackRight.setPower(((y - x) - rx) / denominator);
+                    FrontRight.setPower(((y + x) - rx) / denominator);
+                    intake.setPower((gamepad1.right_trigger * 1) - (gamepad1.left_trigger * 1));
+                }
+                turret.setPower(0);
+                turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+            if (gamepad1.right_trigger == 1 && gamepad1.left_trigger == 1){
+                Tilt.setPosition(0.1575);
             }
         }
     }
